@@ -118,7 +118,7 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
       notes: orderData.notes,
     };
 
-    const requests: Promise<unknown>[] = [
+    const requests: Promise<Response>[] = [
       fetch(`${apiUrl}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
