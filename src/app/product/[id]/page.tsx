@@ -83,11 +83,6 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                 متوفر في المخزون - جاهز للتوصيل
               </div>
-              
-              {/* فورم الطلب للموبايل (تم رفعه ليكون مباشرة تحت السعر) */}
-              <div className="mt-2 border-t border-gray-100 pt-6">
-                <CheckoutForm productName={product.name} price={product.price} />
-              </div>
             </div>
 
             {/* قسم المشكلة والحل (Copywriting مقنع + صور) */}
@@ -260,12 +255,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
           </div>
 
-          {/* العمود الأيسر: الفورم ومعلومات الشراء (مخفي في الموبايل لأنه موجود بالأعلى) */}
-          <div className="hidden lg:block lg:col-span-5">
-            <div className="sticky top-24 space-y-6">
+          {/* العمود الأيسر: الفورم (واحد فقط — موبايل + ديسكتوب) */}
+          <div className="lg:col-span-5">
+            <div className="lg:sticky lg:top-24 space-y-6">
               
-              {/* عنوان المنتج للديسكتوب */}
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+              {/* عنوان المنتج — يظهر فقط على الديسكتوب (على الموبايل موجود فوق) */}
+              <div className="hidden lg:block bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 {product.badge && (
                   <span className="inline-block bg-accent text-white text-xs font-bold px-3 py-1 rounded-full mb-3">
                     {product.badge}
@@ -290,7 +285,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 </div>
               </div>
 
-              {/* فورم الطلب للديسكتوب */}
+              {/* فورم الطلب — نسخة واحدة فقط لتفادي تكرار الحقول */}
               <CheckoutForm productName={product.name} price={product.price} />
 
             </div>

@@ -60,11 +60,43 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
     window.location.href = `/thank-you?total=${total}`;
   };
 
+  const [customerName, setCustomerName] = useState('');
+  const [wilaya, setWilaya] = useState('');
+  const [commune, setCommune] = useState('');
   const [phone, setPhone] = useState('');
+  const [nameError, setNameError] = useState('');
+  const [wilayaError, setWilayaError] = useState('');
+  const [communeError, setCommuneError] = useState('');
   const [phoneError, setPhoneError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const trimmedName = customerName.trim();
+    const trimmedWilaya = wilaya.trim();
+    const trimmedCommune = commune.trim();
+    let hasError = false;
+
+    if (trimmedName.length < 3) {
+      setNameError('يرجى إدخال الاسم واللقب (3 أحرف على الأقل)');
+      hasError = true;
+    } else {
+      setNameError('');
+    }
+
+    if (!trimmedWilaya) {
+      setWilayaError('يرجى اختيار الولاية');
+      hasError = true;
+    } else {
+      setWilayaError('');
+    }
+
+    if (trimmedCommune.length < 2) {
+      setCommuneError('يرجى إدخال اسم البلدية');
+      hasError = true;
+    } else {
+      setCommuneError('');
+    }
     
     // 1. التحقق من رقم الهاتف الجزائري
     const cleanPhone = phone.replace(/\s/g, '');
@@ -73,9 +105,14 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
     // استثناء رقم الاختبار (0555555555) من التحقق
     if (!phoneRegex.test(cleanPhone) && cleanPhone !== '0555555555') {
       setPhoneError('يرجى إدخال رقم هاتف جزائري صحيح (مثال: 0550123456)');
+      hasError = true;
+    } else {
+      setPhoneError('');
+    }
+
+    if (hasError) {
       return;
     }
-    setPhoneError('');
 
     // 2. منع الطلبات المكررة (إلا لرقم الاختبار)
     if (cleanPhone !== '0555555555') {
@@ -92,10 +129,10 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
     const orderData = {
       order_id: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
       date: new Date().toLocaleString('ar-DZ', { timeZone: 'Africa/Algiers' }),
-      customer_name: (document.getElementById('customer_name') as HTMLInputElement)?.value || '',
+      customer_name: trimmedName,
       phone: cleanPhone,
-      wilaya: (document.getElementById('wilaya') as HTMLSelectElement)?.value || '',
-      commune: (document.getElementById('commune') as HTMLInputElement)?.value || '',
+      wilaya: trimmedWilaya,
+      commune: trimmedCommune,
       product_name: productName,
       quantity: quantity,
       total_price: total,
@@ -262,10 +299,17 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
           <input 
             type="text" 
             id="customer_name"
+            name="customer_name"
             required
+            value={customerName}
+            onChange={(e) => {
+              setCustomerName(e.target.value);
+              setNameError('');
+            }}
             placeholder="مثال: محمد أمين"
-            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+            className={`w-full px-4 py-3 rounded-xl border ${nameError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all`}
           />
+          {nameError && <p className="text-red-500 text-xs mt-1 font-bold">{nameError}</p>}
         </div>
 
         {/* رقم الهاتف */}
@@ -291,20 +335,38 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">الولاية *</label>
-            <select id="wilaya" required className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all bg-white">
+            <select
+              id="wilaya"
+              name="wilaya"
+              required
+              value={wilaya}
+              onChange={(e) => {
+                setWilaya(e.target.value);
+                setWilayaError('');
+              }}
+              className={`w-full px-4 py-3 rounded-xl border ${wilayaError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all bg-white`}
+            >
               <option value="">اختر الولاية...</option>
               {WILAYAS.map(w => <option key={w} value={w}>{w}</option>)}
             </select>
+            {wilayaError && <p className="text-red-500 text-xs mt-1 font-bold">{wilayaError}</p>}
           </div>
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">البلدية *</label>
             <input 
               type="text" 
               id="commune"
+              name="commune"
               required
+              value={commune}
+              onChange={(e) => {
+                setCommune(e.target.value);
+                setCommuneError('');
+              }}
               placeholder="اسم البلدية"
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+              className={`w-full px-4 py-3 rounded-xl border ${communeError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all`}
             />
+            {communeError && <p className="text-red-500 text-xs mt-1 font-bold">{communeError}</p>}
           </div>
         </div>
 
