@@ -104,10 +104,11 @@ export default function Home() {
                     <h3 className="text-lg font-bold text-text mb-1 hover:text-primary transition-colors line-clamp-2">{product.name}</h3>
                   </Link>
                   
-                  {/* Rating Stars */}
                   <div className="flex items-center gap-1 mb-3">
                     <div className="flex text-yellow-400 text-xs">⭐⭐⭐⭐⭐</div>
-                    <span className="text-xs text-gray-400">(+120 تقييم)</span>
+                    <span className="text-xs text-gray-500">
+                      ({product.reviewCount ?? 120}+ تقييم)
+                    </span>
                   </div>
                   
                   <div className="flex items-center gap-3 mb-5 mt-auto pt-4">

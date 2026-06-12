@@ -290,8 +290,12 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
             isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-accent hover:bg-accent/90 hover:shadow-xl animate-pulse-slow'
           }`}
         >
-          {isSubmitting ? 'جاري الإرسال...' : 'تأكيد الطلب الآن'}
+          {isSubmitting ? 'جاري الإرسال...' : 'تأكيد الطلب — الدفع عند الاستلام'}
         </button>
+
+        <p className="text-center text-xs text-green-700 font-bold mt-2">
+          ✓ ما تخلص حتى تستلم المنتج وتتأكد منو
+        </p>
 
         <p className="text-center text-xs text-gray-500 mt-3 flex items-center justify-center gap-1">
           <span>🔒</span> معلوماتك محمية ولن يتم مشاركتها

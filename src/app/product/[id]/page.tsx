@@ -4,6 +4,9 @@ import Image from 'next/image';
 import CheckoutForm from '@/components/checkout/CheckoutForm';
 import ProductGallery from '@/components/product/ProductGallery';
 import UsageSection from '@/components/product/UsageSection';
+import ProductReviews from '@/components/product/ProductReviews';
+import ConversionTrustBar from '@/components/product/ConversionTrustBar';
+import { DEFAULT_REVIEWS } from '@/data/products';
 
 const DEFAULT_PROBLEM_TEXT =
   'الجلوس الطويل، السياقة لمسافات، أو حتى طريقة النوم الخاطئة... كلها تسبب ضغطاً كبيراً على جسمك، مما يؤدي إلى تعب مستمر يمنعك من الاستمتاع بيومك والتركيز في عملك.';
@@ -20,6 +23,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
   const problemText = product.problemText || DEFAULT_PROBLEM_TEXT;
   const solutionText = product.solutionText || DEFAULT_SOLUTION_TEXT;
+  const reviews = product.reviews?.length ? product.reviews : DEFAULT_REVIEWS;
 
   return (
     <div className="bg-gray-50 min-h-screen pb-24">
@@ -68,6 +72,15 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                 متوفر في المخزون - جاهز للتوصيل
               </div>
+              {product.rating && (
+                <div className="flex items-center gap-2 mt-3 text-sm text-gray-600">
+                  <span className="text-yellow-400">⭐⭐⭐⭐⭐</span>
+                  <span className="font-bold">{product.rating}/5</span>
+                  {product.reviewCount && (
+                    <span className="text-gray-400">({product.reviewCount}+ زبون راضٍ)</span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -95,9 +108,19 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                   <span className="animate-pulse">🔥</span>
                   الطلب عالي جداً على هذا المنتج، الكمية محدودة!
                 </div>
+                {product.rating && (
+                  <div className="flex items-center gap-2 mt-4 text-sm text-gray-600">
+                    <span className="text-yellow-400">⭐⭐⭐⭐⭐</span>
+                    <span className="font-bold">{product.rating}/5</span>
+                    {product.reviewCount && (
+                      <span className="text-gray-400">({product.reviewCount}+ تقييم)</span>
+                    )}
+                  </div>
+                )}
               </div>
 
               <CheckoutForm productName={product.name} price={product.price} />
+              <ConversionTrustBar />
             </div>
           </div>
 
@@ -228,45 +251,11 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             </div>
 
             {/* تقييمات واقعية */}
-            <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-black text-text">واش قالو زبائننا؟</h2>
-                <div className="flex items-center gap-2 bg-yellow-50 px-3 py-1 rounded-lg border border-yellow-100">
-                  <span className="font-bold text-yellow-700">4.8/5</span>
-                  <div className="flex text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
-                </div>
-              </div>
-              
-              <div className="space-y-6">
-                <div className="border-b border-gray-100 pb-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500">أ</div>
-                      <div>
-                        <span className="font-bold text-gray-800 block">أمين ب. <span className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded ml-2">مشترِ مؤكد</span></span>
-                        <span className="text-xs text-gray-400">الجزائر العاصمة</span>
-                      </div>
-                    </div>
-                    <div className="flex text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
-                  </div>
-                  <p className="text-gray-700 leading-relaxed">"المنتج وصلني في يومين، الجودة تاعو خير ملي كنت متوقع. ريحني بزاف في الخدمة. يعطيهم الصحة فريق كونفور ديزاد على المعاملة المليحة."</p>
-                </div>
-                
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500">س</div>
-                      <div>
-                        <span className="font-bold text-gray-800 block">سعاد م. <span className="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded ml-2">مشترِ مؤكد</span></span>
-                        <span className="text-xs text-gray-400">وهران</span>
-                      </div>
-                    </div>
-                    <div className="flex text-yellow-400 text-sm">⭐⭐⭐⭐⭐</div>
-                  </div>
-                  <p className="text-gray-700 leading-relaxed">"شريتو لراجلي كان يعاني من سطر الظهر كي يسوق مسافات طويلة. الحمد لله عجبو بزاف وقال بلي لاحظ الفرق من النهار الأول."</p>
-                </div>
-              </div>
-            </div>
+            <ProductReviews
+              reviews={reviews}
+              rating={product.rating}
+              reviewCount={product.reviewCount}
+            />
 
             {/* الأسئلة الشائعة (FAQ) */}
             <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 mt-8">
