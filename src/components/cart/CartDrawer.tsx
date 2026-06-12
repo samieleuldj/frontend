@@ -6,9 +6,10 @@ import { products } from '@/data/products';
 
 // Upsell Logic Matrix
 const UPSELL_MATRIX: Record<string, string> = {
+  'cellulite-device': 'orthopedic-pillow',
   'lumbar-belt': 'car-cushion',
   'car-cushion': 'orthopedic-pillow',
-  'orthopedic-pillow': 'lumbar-belt',
+  'orthopedic-pillow': 'cellulite-device',
 };
 
 export default function CartDrawer({ 

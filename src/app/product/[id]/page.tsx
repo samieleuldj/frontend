@@ -1,6 +1,14 @@
 import { products } from '@/data/products';
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 import CheckoutForm from '@/components/checkout/CheckoutForm';
+import ProductGallery from '@/components/product/ProductGallery';
+
+const DEFAULT_PROBLEM_TEXT =
+  'الجلوس الطويل، السياقة لمسافات، أو حتى طريقة النوم الخاطئة... كلها تسبب ضغطاً كبيراً على جسمك، مما يؤدي إلى تعب مستمر يمنعك من الاستمتاع بيومك والتركيز في عملك.';
+
+const DEFAULT_SOLUTION_TEXT =
+  'هذا المنتج مصمم خصيصاً ليوفر لك الدعم والراحة التي يفتقدها جسمك. ليس مجرد منتج عادي، بل هو استثمار في راحتك اليومية.';
 
 export default function ProductPage({ params }: { params: { id: string } }) {
   const product = products.find(p => p.id === params.id);
@@ -8,6 +16,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   if (!product) {
     notFound();
   }
+
+  const problemText = product.problemText || DEFAULT_PROBLEM_TEXT;
+  const solutionText = product.solutionText || DEFAULT_SOLUTION_TEXT;
 
   return (
     <div className="bg-gray-50 min-h-screen pb-24">
@@ -28,36 +39,26 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             
             {/* عنوان المنتج للموبايل (تم إزالته من هنا ونقله تحت الصور) */}
 
-            {/* مكان مخصص للصور (Carousel Style) */}
+            {/* صور المنتج */}
             <div className="space-y-4">
-              <div className="w-full aspect-square bg-white rounded-2xl border border-gray-200 flex items-center justify-center relative overflow-hidden group shadow-sm">
-                <span className="text-gray-400 font-medium text-lg absolute z-10 text-center px-4">
-                  صورة المنتج الرئيسية<br/>
-                  <span className="text-sm">(أضف أزرار يمين/يسار هنا لتقليب الصور)</span>
-                </span>
-                
-                {/* أزرار وهمية للتقليب */}
-                <div className="absolute left-4 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center shadow-md z-20 cursor-pointer hover:bg-white">
-                  <span className="text-xl text-gray-600">❮</span>
-                </div>
-                <div className="absolute right-4 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center shadow-md z-20 cursor-pointer hover:bg-white">
-                  <span className="text-xl text-gray-600">❯</span>
-                </div>
-                
-                {/* نقاط أسفل الصورة */}
-                <div className="absolute bottom-4 flex gap-2 z-20">
-                  <div className="w-2 h-2 rounded-full bg-primary"></div>
-                  <div className="w-2 h-2 rounded-full bg-gray-300"></div>
-                  <div className="w-2 h-2 rounded-full bg-gray-300"></div>
-                </div>
-              </div>
-              <div className="grid grid-cols-4 gap-4">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="w-full aspect-square bg-white rounded-xl border border-gray-200 flex items-center justify-center hover:border-primary transition-colors cursor-pointer shadow-sm">
-                    <span className="text-gray-400 text-xs">صورة {i}</span>
+              {product.images && product.images.length > 0 ? (
+                <ProductGallery images={product.images} productName={product.name} />
+              ) : (
+                <>
+                  <div className="w-full aspect-square bg-white rounded-2xl border border-gray-200 flex items-center justify-center relative overflow-hidden group shadow-sm">
+                    <span className="text-gray-400 font-medium text-lg absolute z-10 text-center px-4">
+                      صورة المنتج الرئيسية
+                    </span>
                   </div>
-                ))}
-              </div>
+                  <div className="grid grid-cols-4 gap-4">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className="w-full aspect-square bg-white rounded-xl border border-gray-200 flex items-center justify-center shadow-sm">
+                        <span className="text-gray-400 text-xs">صورة {i}</span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
 
             {/* عنوان المنتج والسعر (للموبايل) - يظهر مباشرة تحت الصور */}
@@ -97,13 +98,24 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                   <p className="text-gray-600 text-lg leading-relaxed border-r-4 border-red-200 pr-4">
-                    الجلوس الطويل، السياقة لمسافات، أو حتى طريقة النوم الخاطئة... كلها تسبب ضغطاً كبيراً على جسمك، مما يؤدي إلى تعب مستمر يمنعك من الاستمتاع بيومك والتركيز في عملك.
+                    {problemText}
                   </p>
-                  {/* مكان صورة المشكلة */}
-                  <div className="w-full aspect-video bg-red-50 rounded-xl border-2 border-dashed border-red-200 flex flex-col items-center justify-center text-center p-4">
-                    <span className="text-4xl mb-2">😫</span>
-                    <span className="text-red-400 font-bold text-sm">مكان صورة المشكلة<br/>(شخص يعاني من الألم)</span>
-                  </div>
+                  {product.beforeImage ? (
+                    <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden border border-red-100 shadow-sm">
+                      <Image
+                        src={product.beforeImage}
+                        alt={`${product.name} - قبل الاستخدام`}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-full aspect-video bg-red-50 rounded-xl border-2 border-dashed border-red-200 flex flex-col items-center justify-center text-center p-4">
+                      <span className="text-4xl mb-2">😫</span>
+                      <span className="text-red-400 font-bold text-sm">مكان صورة المشكلة</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -115,13 +127,24 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-6">
-                  {/* مكان صورة الحل */}
-                  <div className="w-full aspect-video bg-green-50 rounded-xl border-2 border-dashed border-green-200 flex flex-col items-center justify-center text-center p-4 order-2 md:order-1">
-                    <span className="text-4xl mb-2">😌</span>
-                    <span className="text-green-500 font-bold text-sm">مكان صورة الحل<br/>(شخص مرتاح يستخدم المنتج)</span>
-                  </div>
+                  {product.afterImage ? (
+                    <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden border border-green-100 shadow-sm order-2 md:order-1">
+                      <Image
+                        src={product.afterImage}
+                        alt={`${product.name} - بعد الاستخدام`}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-full aspect-video bg-green-50 rounded-xl border-2 border-dashed border-green-200 flex flex-col items-center justify-center text-center p-4 order-2 md:order-1">
+                      <span className="text-4xl mb-2">😌</span>
+                      <span className="text-green-500 font-bold text-sm">مكان صورة الحل</span>
+                    </div>
+                  )}
                   <p className="text-gray-700 text-lg leading-relaxed font-medium order-1 md:order-2 border-r-4 border-green-200 pr-4">
-                    هذا المنتج مصمم خصيصاً ليوفر لك الدعم والراحة التي يفتقدها جسمك. ليس مجرد منتج عادي، بل هو استثمار في راحتك اليومية.
+                    {solutionText}
                   </p>
                 </div>
               </div>

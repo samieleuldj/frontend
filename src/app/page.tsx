@@ -83,8 +83,18 @@ export default function Home() {
                       {product.badge}
                     </div>
                   )}
-                  <div className="relative aspect-square w-full bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-colors">
-                    <span className="text-gray-400 font-medium">صورة {product.name}</span>
+                  <div className="relative aspect-square w-full bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-colors overflow-hidden">
+                    {product.images && product.images[0] ? (
+                      <Image
+                        src={product.images[0]}
+                        alt={product.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
+                    ) : (
+                      <span className="text-gray-400 font-medium">صورة {product.name}</span>
+                    )}
                   </div>
                 </Link>
                 
