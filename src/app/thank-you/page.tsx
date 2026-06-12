@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { STORE_PHONE_DISPLAY, STORE_WHATSAPP_URL } from '@/lib/store';
 
 export default function ThankYouPage({
   searchParams,
@@ -7,7 +8,7 @@ export default function ThankYouPage({
 }) {
   const total = searchParams.total || '---';
   const orderId = searchParams.orderId || Math.floor(100000 + Math.random() * 900000).toString();
-  const confirmationPhone = "0550 12 34 56"; // رقم هاتف التأكيد الخاص بالمتجر
+  const confirmationPhone = STORE_PHONE_DISPLAY;
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
@@ -65,7 +66,7 @@ export default function ThankYouPage({
           <div className="mt-10 text-center">
             <p className="text-gray-500 mb-4 text-sm">مستعجل؟ أكد طلبيتك الآن عبر الواتساب لنسرع عملية الشحن</p>
             <a 
-              href={`https://wa.me/213550123456?text=السلام عليكم، أريد تأكيد طلبيتي رقم ${orderId}`}
+              href={`${STORE_WHATSAPP_URL}?text=السلام عليكم، أريد تأكيد طلبيتي رقم ${orderId}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-lg py-4 px-8 rounded-xl shadow-lg transition-transform hover:-translate-y-1 w-full md:w-auto"

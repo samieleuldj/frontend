@@ -117,12 +117,13 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                     {problemText}
                   </p>
                   {product.beforeImage ? (
-                    <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden border border-red-100 shadow-sm">
+                    <div className="w-full rounded-xl overflow-hidden border border-red-100 shadow-sm bg-gray-50">
                       <Image
                         src={product.beforeImage}
                         alt={`${product.name} - قبل الاستخدام`}
-                        fill
-                        className="object-cover"
+                        width={800}
+                        height={1000}
+                        className="w-full h-auto"
                         sizes="(max-width: 768px) 100vw, 50vw"
                       />
                     </div>
@@ -144,12 +145,13 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-6">
                   {product.afterImage ? (
-                    <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden border border-green-100 shadow-sm order-2 md:order-1">
+                    <div className="w-full rounded-xl overflow-hidden border border-green-100 shadow-sm bg-gray-50 order-2 md:order-1">
                       <Image
                         src={product.afterImage}
                         alt={`${product.name} - بعد الاستخدام`}
-                        fill
-                        className="object-cover"
+                        width={800}
+                        height={1000}
+                        className="w-full h-auto"
                         sizes="(max-width: 768px) 100vw, 50vw"
                       />
                     </div>
