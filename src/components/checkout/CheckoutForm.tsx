@@ -169,7 +169,9 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
       quantity,
       shipping_cost: deliveryCost,
       total_price: total,
-      status: 'Pending',
+      delivery_type: deliveryType === 'home' ? 'منزل' : 'مكتب',
+      status: 'En attente',
+      tracking_number: '',
       notes: deliveryLabel,
     };
 
@@ -371,7 +373,7 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
           </select>
           {deliveryError && <p className="text-red-500 text-xs mt-1 font-bold">{deliveryError}</p>}
           {wilaya && deliveryType === 'home' && (
-            <p className="text-xs text-gray-500 mt-1">السعر حسب تعريفة Yalidine للولاية المختارة</p>
+            <p className="text-xs text-gray-500 mt-1">السعر حسب تعريفة DHD للولاية المختارة</p>
           )}
         </div>
 

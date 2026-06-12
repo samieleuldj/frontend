@@ -6,7 +6,7 @@ export type ShippingRate = {
 };
 
 /**
- * Tarif Livraison Yalidine (domicile / Stop desk) by official wilaya code.
+ * Tarif Livraison DHD (domicile / Stop desk) by official wilaya code.
  * Codes 01–49 and 51 match the courier table directly.
  * Codes 50–58 in the form use overrides where numbering differs.
  */
