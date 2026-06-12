@@ -154,10 +154,6 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
     setIsSubmitting(true);
 
     const orderId = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
-    const deliveryLabel =
-      deliveryType === 'home'
-        ? `توصيل للمنزل (${deliveryCost} دج)`
-        : `مكتب التوصيل (${deliveryCost} دج)`;
     const orderData = {
       order_id: orderId,
       date: new Date().toLocaleString('ar-DZ', { timeZone: 'Africa/Algiers' }),
@@ -167,12 +163,14 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
       commune: trimmedCommune,
       product_name: productName,
       quantity,
+      unit_price: price,
+      product_price: baseTotal,
       shipping_cost: deliveryCost,
       total_price: total,
       delivery_type: deliveryType === 'home' ? 'منزل' : 'مكتب',
       status: 'En attente',
       tracking_number: '',
-      notes: deliveryLabel,
+      notes: '',
     };
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.confortdz.shop';
@@ -187,9 +185,10 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
       product_name: orderData.product_name,
       quantity: orderData.quantity,
       unit_price: price,
+      shipping_cost: deliveryCost,
       total_price: orderData.total_price,
       delivery_type: deliveryType,
-      notes: orderData.notes,
+      notes: '',
     };
 
     try {
