@@ -3,7 +3,34 @@ interface UsageSectionProps {
   videoUrl?: string;
 }
 
+function getVideoEmbedUrl(url: string): string | null {
+  const trimmed = url.trim();
+
+  // TikTok: https://www.tiktok.com/@user/video/1234567890
+  const tiktokMatch = trimmed.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/);
+  if (tiktokMatch) {
+    return `https://www.tiktok.com/embed/v2/${tiktokMatch[1]}`;
+  }
+
+  // YouTube watch: https://www.youtube.com/watch?v=VIDEO_ID
+  const youtubeWatchMatch = trimmed.match(
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+  );
+  if (youtubeWatchMatch) {
+    return `https://www.youtube.com/embed/${youtubeWatchMatch[1]}`;
+  }
+
+  // Already an embed URL
+  if (trimmed.includes('/embed/')) {
+    return trimmed;
+  }
+
+  return null;
+}
+
 export default function UsageSection({ steps, videoUrl }: UsageSectionProps) {
+  const embedUrl = videoUrl ? getVideoEmbedUrl(videoUrl) : null;
+
   return (
     <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
       <div className="flex items-center gap-3 mb-6">
@@ -23,10 +50,10 @@ export default function UsageSection({ steps, videoUrl }: UsageSectionProps) {
           ))}
         </ol>
 
-        <div className="relative aspect-[9/16] max-h-[420px] mx-auto w-full rounded-2xl overflow-hidden border border-gray-200 bg-gray-900 shadow-inner">
-          {videoUrl ? (
+        <div className="relative aspect-[9/16] max-h-[420px] mx-auto w-full max-w-[280px] rounded-2xl overflow-hidden border border-gray-200 bg-gray-900 shadow-inner">
+          {embedUrl ? (
             <iframe
-              src={videoUrl}
+              src={embedUrl}
               title="فيديو توضيحي"
               className="absolute inset-0 w-full h-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -37,9 +64,9 @@ export default function UsageSection({ steps, videoUrl }: UsageSectionProps) {
               <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-4">
                 <span className="text-3xl text-white">▶</span>
               </div>
-              <p className="text-white font-bold text-lg mb-2">فيديو توضيحي قريباً</p>
+              <p className="text-white font-bold text-lg mb-2">فيديو TikTok قريباً</p>
               <p className="text-white/80 text-sm leading-relaxed">
-                اتبعي الخطوات على اليسار — 15 إلى 20 دقيقة يومياً لمدة 7 إلى 10 أيام.
+                ابعتيلنا رابط الفيديو من TikTok ونزيدوه هنا تلقائياً.
               </p>
             </div>
           )}
