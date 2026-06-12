@@ -7,6 +7,7 @@ import {
   getShippingRate,
   isDeskDeliveryAvailable,
 } from '@/data/shipping-rates';
+import { getCommunesForWilaya } from '@/data/communes';
 
 const WILAYAS = [
   "01 - أدرار", "02 - الشلف", "03 - الأغواط", "04 - أم البواقي", "05 - باتنة", "06 - بجاية", "07 - بسكرة", "08 - بشار", "09 - البليدة", "10 - البويرة",
@@ -50,6 +51,7 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
   const [deliveryError, setDeliveryError] = useState('');
 
   const shippingRate = useMemo(() => getShippingRate(wilaya), [wilaya]);
+  const communes = useMemo(() => getCommunesForWilaya(wilaya), [wilaya]);
   const deliveryCost = useMemo(() => {
     if (!wilaya) return null;
     return getShippingCost(wilaya, deliveryType);
@@ -67,6 +69,11 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
       setDeliveryType('home');
     }
   }, [wilaya, deliveryType]);
+
+  useEffect(() => {
+    setCommune('');
+    setCommuneError('');
+  }, [wilaya]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,8 +103,8 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
       setWilayaError('');
     }
 
-    if (trimmedCommune.length < 2) {
-      setCommuneError('يرجى إدخال اسم البلدية');
+    if (!trimmedCommune) {
+      setCommuneError('يرجى اختيار البلدية');
       hasError = true;
     } else {
       setCommuneError('');
@@ -303,6 +310,7 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
               onChange={(e) => {
                 setWilaya(e.target.value);
                 setWilayaError('');
+                setCommune('');
               }}
               className={`w-full px-4 py-3 rounded-xl border ${wilayaError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all bg-white`}
             >
@@ -313,19 +321,25 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
           </div>
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">البلدية *</label>
-            <input
-              type="text"
+            <select
               id="commune"
               name="commune"
               required
+              disabled={!wilaya}
               value={commune}
               onChange={(e) => {
                 setCommune(e.target.value);
                 setCommuneError('');
               }}
-              placeholder="اسم البلدية"
-              className={`w-full px-4 py-3 rounded-xl border ${communeError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all`}
-            />
+              className={`w-full px-4 py-3 rounded-xl border ${communeError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all bg-white disabled:bg-gray-100 disabled:text-gray-400`}
+            >
+              <option value="">
+                {wilaya ? 'اختر البلدية...' : 'اختر الولاية أولاً'}
+              </option>
+              {communes.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
             {communeError && <p className="text-red-500 text-xs mt-1 font-bold">{communeError}</p>}
           </div>
         </div>
