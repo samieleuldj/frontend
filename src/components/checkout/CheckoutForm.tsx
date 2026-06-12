@@ -168,7 +168,7 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
       shipping_cost: deliveryCost,
       total_price: total,
       delivery_type: deliveryType === 'home' ? 'منزل' : 'مكتب',
-      status: 'En attente',
+      status: 'في الانتظار',
       tracking_number: '',
       notes: '',
     };
