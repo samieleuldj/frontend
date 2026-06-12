@@ -11,7 +11,6 @@ export type Product = {
   afterImage?: string;
   problemText?: string;
   solutionText?: string;
-  showcaseImages?: string[];
   usageSteps?: string[];
   videoUrl?: string;
 };
@@ -25,11 +24,13 @@ export const products: Product[] = [
     price: 5900,
     oldPrice: 6900,
     badge: 'الأكثر طلباً 🔥',
-    images: ['/products/cellulite-device/after.png'],
-    showcaseImages: [
+    images: [
       '/products/cellulite-device/hero.png',
       '/products/cellulite-device/product-box.png',
+      '/products/cellulite-device/after.png',
     ],
+    videoUrl:
+      'https://www.tiktok.com/@purevabeuty/video/7612706233933466887',
     usageSteps: [
       'نظّفي وجفّفي المنطقة (فخذ، مؤخرة، بطن...) قبل الاستعمال.',
       'شغّلي الجهاز واختاري مستوى منخفض في البداية، ثم زيدي تدريجياً.',

@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import CheckoutForm from '@/components/checkout/CheckoutForm';
 import ProductGallery from '@/components/product/ProductGallery';
-import ProductShowcase from '@/components/product/ProductShowcase';
 import UsageSection from '@/components/product/UsageSection';
 
 const DEFAULT_PROBLEM_TEXT =
@@ -38,15 +37,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
           {/* 1. الصور + العنوان (موبايل) — فوق */}
           <div className="lg:col-span-7 space-y-6 order-1">
-            {product.showcaseImages && product.showcaseImages.length > 0 && (
-              <ProductShowcase images={product.showcaseImages} productName={product.name} />
-            )}
-
-            {product.images && product.images.length > 0 && (
+            {product.images && product.images.length > 0 ? (
               <ProductGallery images={product.images} productName={product.name} />
-            )}
-
-            {!product.images?.length && !product.showcaseImages?.length && (
+            ) : (
               <div className="w-full aspect-square bg-white rounded-2xl border border-gray-200 flex items-center justify-center shadow-sm">
                 <span className="text-gray-400 font-medium">صورة المنتج الرئيسية</span>
               </div>
