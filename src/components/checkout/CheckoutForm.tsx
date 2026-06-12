@@ -215,24 +215,27 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
         }).catch(() => undefined);
       }
 
-      if (typeof window !== 'undefined') {
-        const eventData = {
-          value: total,
-          currency: 'DZD',
-          content_name: productName,
-          content_type: 'product',
-        };
-
-        if (window.fbq) window.fbq('track', 'Purchase', eventData);
-        if (window.ttq) window.ttq.track('CompletePayment', eventData);
-        if (window.snaptr) window.snaptr('track', 'PURCHASE', eventData);
-
-        if (cleanPhone !== '0555555555') {
-          localStorage.setItem('last_order_time', Date.now().toString());
-        }
+      if (cleanPhone !== '0555555555') {
+        localStorage.setItem('last_order_time', Date.now().toString());
       }
 
       window.location.href = `/thank-you?total=${total}&orderId=${encodeURIComponent(orderId)}`;
+
+      if (typeof window !== 'undefined') {
+        try {
+          const eventData = {
+            value: total,
+            currency: 'DZD',
+            content_name: productName,
+            content_type: 'product',
+          };
+          if (window.fbq) window.fbq('track', 'Purchase', eventData);
+          if (window.ttq) window.ttq.track('CompletePayment', eventData);
+          if (window.snaptr) window.snaptr('track', 'PURCHASE', eventData);
+        } catch {
+          // tracking must not block successful orders
+        }
+      }
     } catch {
       setSubmitError('خطأ في الاتصال. تحقق من الإنترنت وحاول مرة أخرى.');
       setIsSubmitting(false);
