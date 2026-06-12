@@ -180,7 +180,11 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             </div>
 
             {product.usageSteps && product.usageSteps.length > 0 && (
-              <UsageSection steps={product.usageSteps} videoUrl={product.videoUrl} />
+              <UsageSection
+                steps={product.usageSteps}
+                videoFile={product.videoFile}
+                videoPoster={product.videoPoster}
+              />
             )}
 
             {/* لماذا تشتري من عندنا (Trust Elements) */}

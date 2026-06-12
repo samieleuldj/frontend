@@ -12,7 +12,9 @@ export type Product = {
   problemText?: string;
   solutionText?: string;
   usageSteps?: string[];
-  videoUrl?: string;
+  /** MP4 على confortdz.shop — يبقى الزبون في الموقع */
+  videoFile?: string;
+  videoPoster?: string;
 };
 
 export const products: Product[] = [
@@ -29,8 +31,8 @@ export const products: Product[] = [
       '/products/cellulite-device/product-box.png',
       '/products/cellulite-device/after.png',
     ],
-    videoUrl:
-      'https://www.tiktok.com/@purevabeuty/video/7612706233933466887',
+    videoFile: '/products/cellulite-device/usage.mp4',
+    videoPoster: '/products/cellulite-device/hero.png',
     usageSteps: [
       'نظّفي وجفّفي المنطقة (فخذ، مؤخرة، بطن...) قبل الاستعمال.',
       'شغّلي الجهاز واختاري مستوى منخفض في البداية، ثم زيدي تدريجياً.',
