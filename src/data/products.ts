@@ -11,6 +11,9 @@ export type Product = {
   afterImage?: string;
   problemText?: string;
   solutionText?: string;
+  showcaseImages?: string[];
+  usageSteps?: string[];
+  videoUrl?: string;
 };
 
 export const products: Product[] = [
@@ -22,10 +25,16 @@ export const products: Product[] = [
     price: 5900,
     oldPrice: 6900,
     badge: 'الأكثر طلباً 🔥',
-    images: [
+    images: ['/products/cellulite-device/after.png'],
+    showcaseImages: [
       '/products/cellulite-device/hero.png',
       '/products/cellulite-device/product-box.png',
-      '/products/cellulite-device/after.png',
+    ],
+    usageSteps: [
+      'نظّفي وجفّفي المنطقة (فخذ، مؤخرة، بطن...) قبل الاستعمال.',
+      'شغّلي الجهاز واختاري مستوى منخفض في البداية، ثم زيدي تدريجياً.',
+      'مرّري الجهاز ببطء على الجلد 15 إلى 20 دقيقة في كل جلسة.',
+      'كرّري يومياً لمدة 7 إلى 10 أيام — النتائج تبان مع المداومة.',
     ],
     beforeImage: '/products/cellulite-device/before.png',
     afterImage: '/products/cellulite-device/after.png',

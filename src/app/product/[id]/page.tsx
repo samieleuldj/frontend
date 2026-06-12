@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import CheckoutForm from '@/components/checkout/CheckoutForm';
 import ProductGallery from '@/components/product/ProductGallery';
+import ProductShowcase from '@/components/product/ProductShowcase';
+import UsageSection from '@/components/product/UsageSection';
 
 const DEFAULT_PROBLEM_TEXT =
   'الجلوس الطويل، السياقة لمسافات، أو حتى طريقة النوم الخاطئة... كلها تسبب ضغطاً كبيراً على جسمك، مما يؤدي إلى تعب مستمر يمنعك من الاستمتاع بيومك والتركيز في عملك.';
@@ -32,61 +34,82 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          
-          {/* العمود الأيمن: تفاصيل المنتج والصور */}
-          <div className="lg:col-span-7 space-y-8">
-            
-            {/* عنوان المنتج للموبايل (تم إزالته من هنا ونقله تحت الصور) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
-            {/* صور المنتج */}
-            <div className="space-y-4">
-              {product.images && product.images.length > 0 ? (
-                <ProductGallery images={product.images} productName={product.name} />
-              ) : (
-                <>
-                  <div className="w-full aspect-square bg-white rounded-2xl border border-gray-200 flex items-center justify-center relative overflow-hidden group shadow-sm">
-                    <span className="text-gray-400 font-medium text-lg absolute z-10 text-center px-4">
-                      صورة المنتج الرئيسية
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-4 gap-4">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div key={i} className="w-full aspect-square bg-white rounded-xl border border-gray-200 flex items-center justify-center shadow-sm">
-                        <span className="text-gray-400 text-xs">صورة {i}</span>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
+          {/* 1. الصور + العنوان (موبايل) — فوق */}
+          <div className="lg:col-span-7 space-y-6 order-1">
+            {product.showcaseImages && product.showcaseImages.length > 0 && (
+              <ProductShowcase images={product.showcaseImages} productName={product.name} />
+            )}
 
-            {/* عنوان المنتج والسعر (للموبايل) - يظهر مباشرة تحت الصور */}
-            <div className="block lg:hidden bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-6">
+            {product.images && product.images.length > 0 && (
+              <ProductGallery images={product.images} productName={product.name} />
+            )}
+
+            {!product.images?.length && !product.showcaseImages?.length && (
+              <div className="w-full aspect-square bg-white rounded-2xl border border-gray-200 flex items-center justify-center shadow-sm">
+                <span className="text-gray-400 font-medium">صورة المنتج الرئيسية</span>
+              </div>
+            )}
+
+            <div className="block lg:hidden bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
               {product.badge && (
                 <span className="inline-block bg-accent text-white text-xs font-bold px-3 py-1 rounded-full mb-3">
                   {product.badge}
                 </span>
               )}
               <h1 className="text-2xl font-black text-text mb-3 leading-tight">{product.name}</h1>
-              
+              <p className="text-gray-600 text-sm mb-4 leading-relaxed">{product.description}</p>
               <div className="flex items-center gap-4 mb-4">
                 <span className="text-3xl font-black text-primary">{product.price} دج</span>
                 {product.oldPrice && (
                   <div className="flex flex-col">
                     <span className="text-gray-400 line-through text-sm">{product.oldPrice} دج</span>
-                    <span className="text-accent text-xs font-bold bg-orange-50 px-2 py-0.5 rounded">وفر {product.oldPrice - product.price} دج!</span>
+                    <span className="text-accent text-xs font-bold bg-orange-50 px-2 py-0.5 rounded">
+                      وفر {product.oldPrice - product.price} دج!
+                    </span>
                   </div>
                 )}
               </div>
-              
-              <div className="flex items-center gap-2 text-sm text-green-700 font-bold bg-green-50 p-3 rounded-lg border border-green-100 mb-6">
+              <div className="flex items-center gap-2 text-sm text-green-700 font-bold bg-green-50 p-3 rounded-lg border border-green-100">
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                 متوفر في المخزون - جاهز للتوصيل
               </div>
             </div>
+          </div>
 
-            {/* قسم المشكلة والحل (Copywriting مقنع + صور) */}
+          {/* 2. فورم الطلب — مباشرة تحت العنوان على الموبايل */}
+          <div className="lg:col-span-5 lg:row-span-2 order-2 self-start w-full">
+            <div className="lg:sticky lg:top-24 space-y-6">
+              <div className="hidden lg:block bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                {product.badge && (
+                  <span className="inline-block bg-accent text-white text-xs font-bold px-3 py-1 rounded-full mb-3">
+                    {product.badge}
+                  </span>
+                )}
+                <h1 className="text-3xl font-black text-text mb-3 leading-tight">{product.name}</h1>
+                <p className="text-gray-600 text-sm mb-6 leading-relaxed">{product.description}</p>
+                <div className="flex items-center gap-4 mb-4">
+                  <span className="text-4xl font-black text-primary">{product.price} دج</span>
+                  {product.oldPrice && (
+                    <div className="flex flex-col">
+                      <span className="text-gray-400 line-through text-lg">{product.oldPrice} دج</span>
+                      <span className="text-accent text-sm font-bold">وفر {product.oldPrice - product.price} دج!</span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 text-sm text-red-700 font-bold bg-red-50 p-3 rounded-lg border border-red-100">
+                  <span className="animate-pulse">🔥</span>
+                  الطلب عالي جداً على هذا المنتج، الكمية محدودة!
+                </div>
+              </div>
+
+              <CheckoutForm productName={product.name} price={product.price} />
+            </div>
+          </div>
+
+          {/* 3. المحتوى التفصيلي — تحت الفورم على الموبايل */}
+          <div className="lg:col-span-7 space-y-8 order-3">
             <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 mt-8">
               
               {/* المشكلة */}
@@ -162,6 +185,10 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 </ul>
               </div>
             </div>
+
+            {product.usageSteps && product.usageSteps.length > 0 && (
+              <UsageSection steps={product.usageSteps} videoUrl={product.videoUrl} />
+            )}
 
             {/* لماذا تشتري من عندنا (Trust Elements) */}
             <div className="bg-primary text-white p-6 md:p-8 rounded-2xl shadow-md relative overflow-hidden">
@@ -276,42 +303,6 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               </div>
             </div>
 
-          </div>
-
-          {/* العمود الأيسر: الفورم (واحد فقط — موبايل + ديسكتوب) */}
-          <div className="lg:col-span-5">
-            <div className="lg:sticky lg:top-24 space-y-6">
-              
-              {/* عنوان المنتج — يظهر فقط على الديسكتوب (على الموبايل موجود فوق) */}
-              <div className="hidden lg:block bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                {product.badge && (
-                  <span className="inline-block bg-accent text-white text-xs font-bold px-3 py-1 rounded-full mb-3">
-                    {product.badge}
-                  </span>
-                )}
-                <h1 className="text-3xl font-black text-text mb-3 leading-tight">{product.name}</h1>
-                <p className="text-gray-600 text-sm mb-6 leading-relaxed">{product.description}</p>
-                
-                <div className="flex items-center gap-4 mb-4">
-                  <span className="text-4xl font-black text-primary">{product.price} دج</span>
-                  {product.oldPrice && (
-                    <div className="flex flex-col">
-                      <span className="text-gray-400 line-through text-lg">{product.oldPrice} دج</span>
-                      <span className="text-accent text-sm font-bold">وفر {product.oldPrice - product.price} دج!</span>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="flex items-center gap-2 text-sm text-red-700 font-bold bg-red-50 p-3 rounded-lg border border-red-100">
-                  <span className="animate-pulse">🔥</span>
-                  الطلب عالي جداً على هذا المنتج، الكمية محدودة!
-                </div>
-              </div>
-
-              {/* فورم الطلب — نسخة واحدة فقط لتفادي تكرار الحقول */}
-              <CheckoutForm productName={product.name} price={product.price} />
-
-            </div>
           </div>
 
         </div>
