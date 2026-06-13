@@ -8,6 +8,9 @@ import UsageSection from '@/components/product/UsageSection';
 import ProductReviews from '@/components/product/ProductReviews';
 import ConversionTrustBar from '@/components/product/ConversionTrustBar';
 import ProductViewPixel from '@/components/tracking/ProductViewPixel';
+import ExitIntentOffer from '@/components/product/ExitIntentOffer';
+import ProductPriceDisplay from '@/components/product/ProductPriceDisplay';
+import StickyOrderBar from '@/components/product/StickyOrderBar';
 import JsonLd from '@/components/seo/JsonLd';
 import { DEFAULT_REVIEWS } from '@/data/products';
 import { buildPageMetadata, productJsonLd, siteConfig } from '@/lib/seo';
@@ -88,15 +91,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               <h1 className="text-2xl font-black text-text mb-3 leading-tight">{product.name}</h1>
               <p className="text-gray-600 text-sm mb-4 leading-relaxed">{product.description}</p>
               <div className="flex items-center gap-4 mb-4">
-                <span className="text-3xl font-black text-primary">{product.price} دج</span>
-                {product.oldPrice && (
-                  <div className="flex flex-col">
-                    <span className="text-gray-400 line-through text-sm">{product.oldPrice} دج</span>
-                    <span className="text-accent text-xs font-bold bg-orange-50 px-2 py-0.5 rounded">
-                      وفر {product.oldPrice - product.price} دج!
-                    </span>
-                  </div>
-                )}
+                <ProductPriceDisplay
+                  productId={product.id}
+                  price={product.price}
+                  oldPrice={product.oldPrice}
+                  size="lg"
+                />
               </div>
               <div className="flex items-center gap-2 text-sm text-green-700 font-bold bg-green-50 p-3 rounded-lg border border-green-100">
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
@@ -126,13 +126,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 <h1 className="text-3xl font-black text-text mb-3 leading-tight">{product.name}</h1>
                 <p className="text-gray-600 text-sm mb-6 leading-relaxed">{product.description}</p>
                 <div className="flex items-center gap-4 mb-4">
-                  <span className="text-4xl font-black text-primary">{product.price} دج</span>
-                  {product.oldPrice && (
-                    <div className="flex flex-col">
-                      <span className="text-gray-400 line-through text-lg">{product.oldPrice} دج</span>
-                      <span className="text-accent text-sm font-bold">وفر {product.oldPrice - product.price} دج!</span>
-                    </div>
-                  )}
+                  <ProductPriceDisplay
+                    productId={product.id}
+                    price={product.price}
+                    oldPrice={product.oldPrice}
+                    size="xl"
+                  />
                 </div>
                 <div className="flex items-center gap-2 text-sm text-red-700 font-bold bg-red-50 p-3 rounded-lg border border-red-100">
                   <span className="animate-pulse">🔥</span>
@@ -326,19 +325,13 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         </div>
       </div>
 
-      {/* زر طلب عائم للموبايل (Sticky Mobile CTA) - يوجه للفورم العلوي */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.1)] z-50">
-        <div className="flex items-center justify-between mb-2 px-2">
-          <span className="font-bold text-gray-600 text-sm">السعر الإجمالي:</span>
-          <span className="font-black text-primary text-xl">{product.price} دج</span>
-        </div>
-        <a 
-          href="#order-form"
-          className="block w-full bg-accent hover:bg-accent/90 text-white text-center font-black text-lg py-4 rounded-xl shadow-lg transition-transform active:scale-95"
-        >
-          أطلب الآن - الدفع عند الاستلام
-        </a>
-      </div>
+      <ExitIntentOffer
+        productId={product.id}
+        productName={product.name}
+        basePrice={product.price}
+      />
+
+      <StickyOrderBar productId={product.id} price={product.price} />
     </div>
   );
 }

@@ -3,6 +3,8 @@ export type ProductReview = {
   city: string;
   text: string;
   initial: string;
+  photo?: string;
+  reviewImage?: string;
 };
 
 export type Product = {
@@ -64,22 +66,32 @@ export const products: Product[] = [
     ],
     reviews: [
       {
-        name: 'ندى ك.',
+        name: 'Amel M.',
         city: 'الجزائر العاصمة',
-        initial: 'ن',
-        text: 'من بعد 10 أيام استعمال لاحظت الفخذين وليمتيهم أنعم بزاف. الجهاز ساهل وما يتعبش، والتوصيل كان سريع.',
+        initial: 'أ',
+        reviewImage: '/products/cellulite-device/reviews/review-unbox-green.png',
+        text: 'وصلني اليوم والتغليف ياسر مليح. الجهاز أصلي وفيه الشاحن والكتيب وكلش. ما ندمتش على الشراء.',
       },
       {
-        name: 'Karima B.',
+        name: 'Yasmine K.',
         city: 'وهران',
-        initial: 'ك',
-        text: 'كنت خايفة نضيع فلوسي، لكن صراحة عجبني. البشرة تحسنات وترهلات خفّت. ننصح بيه أي وحدة.',
+        initial: 'ي',
+        reviewImage: '/products/cellulite-device/reviews/review-usage-green.png',
+        text: 'نستعملو كل ليلة 15 دقيقة على الفخذين. من بعد أسبوع لاحظت البشرة أنعم والسيلوليت خفّ. المداومة هي المفتاح.',
       },
       {
-        name: 'Samira L.',
+        name: 'Salima B.',
         city: 'قسنطينة',
         initial: 'س',
-        text: 'شريتو لخيتي، جربتو في البيت كل يوم 15 دقيقة. النتيجة تبان تدريجياً، المهم المداومة.',
+        reviewImage: '/products/cellulite-device/reviews/review-unbox-white.png',
+        text: 'شريتو لخيتي، جا كامل مع الشاحن والفلاتر. التوصيل كان سريع واتصلو بيا للتأكيد قبل ما يوصل.',
+      },
+      {
+        name: 'Houda R.',
+        city: 'باتنة',
+        initial: 'ه',
+        reviewImage: '/products/cellulite-device/reviews/review-hand-white.png',
+        text: 'خفيف في اليد وساهل الاستعمال في البيت. ما يتعبش وما يحتاجش عيادة. ننصح بيه أي وحدة.',
       },
     ],
   },

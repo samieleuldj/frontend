@@ -10,6 +10,11 @@ import {
 import { getCommunesForWilaya } from '@/data/communes';
 import { getTrackingContext, trackEvent } from '@/lib/analytics';
 import { storePendingPurchase, trackInitiateCheckout } from '@/lib/pixels';
+import {
+  DISCOUNT_EVENT,
+  EXIT_DISCOUNT_DZD,
+  getStoredDiscount,
+} from '@/lib/product-discount';
 
 const WILAYAS = [
   "01 - أدرار", "02 - الشلف", "03 - الأغواط", "04 - أم البواقي", "05 - باتنة", "06 - بجاية", "07 - بسكرة", "08 - بشار", "09 - البليدة", "10 - البويرة",
@@ -41,6 +46,7 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [canOrder, setCanOrder] = useState(true);
   const [submitError, setSubmitError] = useState('');
+  const [exitDiscount, setExitDiscount] = useState(0);
 
   const [customerName, setCustomerName] = useState('');
   const [wilaya, setWilaya] = useState('');
@@ -60,12 +66,27 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
     return getShippingCost(wilaya, deliveryType);
   }, [wilaya, deliveryType]);
 
-  const baseTotal = price * quantity;
+  const unitPrice = price - exitDiscount;
+  const baseTotal = unitPrice * quantity;
   const total = baseTotal + (deliveryCost ?? 0);
 
   useEffect(() => {
     setCanOrder(isMobileDevice());
   }, []);
+
+  useEffect(() => {
+    setExitDiscount(getStoredDiscount(productId));
+
+    const onDiscount = (event: Event) => {
+      const detail = (event as CustomEvent<{ productId: string; amount: number }>).detail;
+      if (detail?.productId === productId) {
+        setExitDiscount(detail.amount);
+      }
+    };
+
+    window.addEventListener(DISCOUNT_EVENT, onDiscount);
+    return () => window.removeEventListener(DISCOUNT_EVENT, onDiscount);
+  }, [productId]);
 
   useEffect(() => {
     trackEvent('checkout_start', {
@@ -76,10 +97,10 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
     trackInitiateCheckout({
       productId,
       productName,
-      price,
+      price: unitPrice,
       quantity,
     });
-  }, [productId, productName, price, quantity]);
+  }, [productId, productName, unitPrice, quantity]);
 
   useEffect(() => {
     if (wilaya && deliveryType === 'office' && !isDeskDeliveryAvailable(wilaya)) {
@@ -170,6 +191,9 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
 
     setIsSubmitting(true);
 
+    const discountNote =
+      exitDiscount > 0 ? `خصم ${exitDiscount} دج (عرض خروج)` : '';
+
     const orderId = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
     const orderData = {
       order_id: orderId,
@@ -180,14 +204,14 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
       commune: trimmedCommune,
       product_name: productName,
       quantity,
-      unit_price: price,
+      unit_price: unitPrice,
       product_price: baseTotal,
       shipping_cost: deliveryCost,
       total_price: total,
       delivery_type: deliveryType === 'home' ? 'منزل' : 'مكتب',
       status: 'في الانتظار',
       tracking_number: '',
-      notes: '',
+      notes: discountNote,
     };
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.confortdz.shop';
@@ -201,11 +225,11 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
       product_id: productId,
       product_name: orderData.product_name,
       quantity: orderData.quantity,
-      unit_price: price,
+      unit_price: unitPrice,
       shipping_cost: deliveryCost,
       total_price: orderData.total_price,
       delivery_type: deliveryType,
-      notes: '',
+      notes: discountNote,
       ...getTrackingContext(),
     };
 
@@ -236,7 +260,7 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
         productId,
         productName,
         quantity,
-        price,
+        price: unitPrice,
       });
 
       window.location.href = `/thank-you?total=${total}&orderId=${encodeURIComponent(orderId)}`;
@@ -405,8 +429,16 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
         </div>
 
         <div className="bg-gray-50 p-4 rounded-xl mt-6 border border-gray-200">
+          {exitDiscount > 0 && (
+            <div className="flex justify-between text-green-700 mb-2 text-sm">
+              <span>🎁 خصم عرض الخروج ({EXIT_DISCOUNT_DZD} دج):</span>
+              <span className="font-bold">-{exitDiscount * quantity} دج</span>
+            </div>
+          )}
           <div className="flex justify-between text-gray-600 mb-2">
-            <span>سعر المنتج ({quantity}):</span>
+            <span>
+              سعر المنتج ({quantity} × {unitPrice} دج):
+            </span>
             <span className="font-bold">{baseTotal} دج</span>
           </div>
           <div className="flex justify-between text-gray-600 mb-2">
