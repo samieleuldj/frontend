@@ -21,9 +21,8 @@ export default function Footer() {
             <h4 className="text-lg font-bold mb-4 border-b border-gray-700 pb-2 inline-block">روابط سريعة</h4>
             <ul className="space-y-2 text-gray-400">
               <li><Link href="/" className="hover:text-secondary transition-colors">الرئيسية</Link></li>
-              <li><Link href="#products" className="hover:text-secondary transition-colors">المنتجات</Link></li>
-              <li><Link href="#" className="hover:text-secondary transition-colors">سياسة الاستبدال والاسترجاع</Link></li>
-              <li><Link href="#" className="hover:text-secondary transition-colors">شروط الاستخدام</Link></li>
+              <li><Link href="/#products" className="hover:text-secondary transition-colors">المنتجات</Link></li>
+              <li><Link href="/#reviews" className="hover:text-secondary transition-colors">آراء الزبائن</Link></li>
             </ul>
           </div>
 

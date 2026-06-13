@@ -32,6 +32,7 @@ function buildPurchaseFromParams(
     productId: 'unknown',
     productName: 'Order',
     quantity: 1,
+    price: parsedTotal,
   };
 }
 

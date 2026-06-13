@@ -3,15 +3,6 @@
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, Suspense } from 'react';
 
-// تعريف أنواع البكسل
-declare global {
-  interface Window {
-    fbq: any;
-    ttq: any;
-    snaptr: any;
-  }
-}
-
 function PixelEvents() {
   const pathname = usePathname();
   const searchParams = useSearchParams();

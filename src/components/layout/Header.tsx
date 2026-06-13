@@ -14,14 +14,14 @@ export default function Header() {
         {/* Navigation */}
         <nav className="hidden md:flex items-center gap-6 font-medium text-text/80">
           <Link href="/" className="hover:text-primary transition-colors">الرئيسية</Link>
-          <Link href="#products" className="hover:text-primary transition-colors">منتجاتنا</Link>
-          <Link href="#reviews" className="hover:text-primary transition-colors">آراء الزبائن</Link>
+          <Link href="/#products" className="hover:text-primary transition-colors">منتجاتنا</Link>
+          <Link href="/#reviews" className="hover:text-primary transition-colors">آراء الزبائن</Link>
         </nav>
 
         {/* Cart / CTA */}
         <div className="flex items-center gap-4">
           <a 
-            href="#products" 
+            href="/#products" 
             className="bg-accent hover:bg-accent/90 text-white px-5 py-2 rounded-full font-bold transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
           >
             أطلب الآن
