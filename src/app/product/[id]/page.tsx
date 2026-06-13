@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { products } from '@/data/products';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -6,13 +7,36 @@ import ProductGallery from '@/components/product/ProductGallery';
 import UsageSection from '@/components/product/UsageSection';
 import ProductReviews from '@/components/product/ProductReviews';
 import ConversionTrustBar from '@/components/product/ConversionTrustBar';
+import ProductViewPixel from '@/components/tracking/ProductViewPixel';
+import JsonLd from '@/components/seo/JsonLd';
 import { DEFAULT_REVIEWS } from '@/data/products';
+import { buildPageMetadata, productJsonLd, siteConfig } from '@/lib/seo';
 
 const DEFAULT_PROBLEM_TEXT =
   'الجلوس الطويل، السياقة لمسافات، أو حتى طريقة النوم الخاطئة... كلها تسبب ضغطاً كبيراً على جسمك، مما يؤدي إلى تعب مستمر يمنعك من الاستمتاع بيومك والتركيز في عملك.';
 
 const DEFAULT_SOLUTION_TEXT =
   'هذا المنتج مصمم خصيصاً ليوفر لك الدعم والراحة التي يفتقدها جسمك. ليس مجرد منتج عادي، بل هو استثمار في راحتك اليومية.';
+
+export function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Metadata {
+  const product = products.find((p) => p.id === params.id);
+
+  if (!product) {
+    return { title: 'منتج غير موجود' };
+  }
+
+  return buildPageMetadata({
+    title: `${product.name} — ${product.price} دج | دفع عند الاستلام`,
+    description: product.description,
+    path: `/product/${product.id}`,
+    image: product.images?.[0],
+    keywords: [product.name, 'الجزائر', 'دفع عند الاستلام', siteConfig.nameAr],
+  });
+}
 
 export default function ProductPage({ params }: { params: { id: string } }) {
   const product = products.find(p => p.id === params.id);
@@ -27,6 +51,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="bg-gray-50 min-h-screen pb-24">
+      <ProductViewPixel
+        productId={product.id}
+        productName={product.name}
+        price={product.price}
+      />
+      <JsonLd data={productJsonLd(product)} />
       {/* شريط التنقل السريع */}
       <div className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-3 text-sm text-gray-500 flex items-center gap-2">
@@ -119,7 +149,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 )}
               </div>
 
-              <CheckoutForm productName={product.name} price={product.price} />
+              <CheckoutForm productId={product.id} productName={product.name} price={product.price} />
               <ConversionTrustBar />
             </div>
           </div>

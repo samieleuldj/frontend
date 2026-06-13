@@ -8,6 +8,8 @@ import {
   isDeskDeliveryAvailable,
 } from '@/data/shipping-rates';
 import { getCommunesForWilaya } from '@/data/communes';
+import { getTrackingContext, trackEvent } from '@/lib/analytics';
+import { storePendingPurchase, trackInitiateCheckout } from '@/lib/pixels';
 
 const WILAYAS = [
   "01 - أدرار", "02 - الشلف", "03 - الأغواط", "04 - أم البواقي", "05 - باتنة", "06 - بجاية", "07 - بسكرة", "08 - بشار", "09 - البليدة", "10 - البويرة",
@@ -19,6 +21,7 @@ const WILAYAS = [
 ];
 
 interface CheckoutFormProps {
+  productId: string;
   productName: string;
   price: number;
 }
@@ -32,7 +35,7 @@ function isMobileDevice(): boolean {
   return mobileUA || smallScreen;
 }
 
-export default function CheckoutForm({ productName, price }: CheckoutFormProps) {
+export default function CheckoutForm({ productId, productName, price }: CheckoutFormProps) {
   const maxQuantity = price >= 5000 ? 2 : 4;
   const [quantity, setQuantity] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,6 +66,20 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
   useEffect(() => {
     setCanOrder(isMobileDevice());
   }, []);
+
+  useEffect(() => {
+    trackEvent('checkout_start', {
+      page_path: typeof window !== 'undefined' ? window.location.pathname : undefined,
+      product_name: productName,
+      product_id: productId,
+    });
+    trackInitiateCheckout({
+      productId,
+      productName,
+      price,
+      quantity,
+    });
+  }, [productId, productName, price, quantity]);
 
   useEffect(() => {
     if (wilaya && deliveryType === 'office' && !isDeskDeliveryAvailable(wilaya)) {
@@ -174,7 +191,6 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
     };
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.confortdz.shop';
-    const webhookUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEET_WEBHOOK_URL;
 
     const apiPayload = {
       order_id: orderData.order_id,
@@ -182,6 +198,7 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
       phone: orderData.phone,
       wilaya: orderData.wilaya,
       commune: orderData.commune,
+      product_id: productId,
       product_name: orderData.product_name,
       quantity: orderData.quantity,
       unit_price: price,
@@ -189,6 +206,7 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
       total_price: orderData.total_price,
       delivery_type: deliveryType,
       notes: '',
+      ...getTrackingContext(),
     };
 
     try {
@@ -206,36 +224,22 @@ export default function CheckoutForm({ productName, price }: CheckoutFormProps) 
         return;
       }
 
-      if (webhookUrl && webhookUrl !== 'your_google_script_url_here') {
-        fetch(webhookUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(orderData),
-        }).catch(() => undefined);
-      }
+      // Google Sheet filled by backend (GOOGLE_SHEET_WEBHOOK_URL) — more reliable than browser fetch
 
       if (cleanPhone !== '0555555555') {
         localStorage.setItem('last_order_time', Date.now().toString());
       }
 
-      window.location.href = `/thank-you?total=${total}&orderId=${encodeURIComponent(orderId)}`;
+      storePendingPurchase({
+        orderId,
+        total,
+        productId,
+        productName,
+        quantity,
+        price,
+      });
 
-      if (typeof window !== 'undefined') {
-        try {
-          const eventData = {
-            value: total,
-            currency: 'DZD',
-            content_name: productName,
-            content_type: 'product',
-          };
-          if (window.fbq) window.fbq('track', 'Purchase', eventData);
-          if (window.ttq) window.ttq.track('CompletePayment', eventData);
-          if (window.snaptr) window.snaptr('track', 'PURCHASE', eventData);
-        } catch {
-          // tracking must not block successful orders
-        }
-      }
+      window.location.href = `/thank-you?total=${total}&orderId=${encodeURIComponent(orderId)}`;
     } catch {
       setSubmitError('خطأ في الاتصال. تحقق من الإنترنت وحاول مرة أخرى.');
       setIsSubmitting(false);

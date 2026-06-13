@@ -1,5 +1,15 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { STORE_PHONE_DISPLAY, STORE_WHATSAPP_URL } from '@/lib/store';
+import { buildPageMetadata } from '@/lib/seo';
+import ThankYouPixel from '@/components/tracking/ThankYouPixel';
+
+export const metadata: Metadata = buildPageMetadata({
+  title: 'تم تأكيد الطلب',
+  description: 'صفحة تأكيد الطلب — كونفور ديزاد',
+  path: '/thank-you',
+  noIndex: true,
+});
 
 export default function ThankYouPage({
   searchParams,
@@ -12,6 +22,7 @@ export default function ThankYouPage({
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
+      <ThankYouPixel orderId={searchParams.orderId} total={searchParams.total} />
       <div className="max-w-2xl w-full bg-white rounded-3xl shadow-xl overflow-hidden">
         {/* Header Section */}
         <div className="bg-green-600 p-8 text-center text-white">
