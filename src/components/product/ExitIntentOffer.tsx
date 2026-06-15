@@ -15,6 +15,9 @@ type ExitIntentOfferProps = {
   discount?: number;
 };
 
+const MIN_ENGAGE_MS = 12000;
+const MIN_SCROLL_PX = 280;
+
 function isTouchDevice(): boolean {
   if (typeof window === 'undefined') return false;
   return (
@@ -40,10 +43,14 @@ export default function ExitIntentOffer({
 }: ExitIntentOfferProps) {
   const [open, setOpen] = useState(false);
   const shownRef = useRef(false);
+  const engagedRef = useRef(false);
+  const maxScrollRef = useRef(0);
+  const pageStartRef = useRef(Date.now());
   const salePrice = basePrice - discount;
 
   const showOnce = useCallback(() => {
     if (shownRef.current || wasExitOfferShown(productId)) return;
+    if (!engagedRef.current) return;
     shownRef.current = true;
     markExitOfferShown(productId);
     setOpen(true);
@@ -52,48 +59,36 @@ export default function ExitIntentOffer({
   useEffect(() => {
     if (wasExitOfferShown(productId)) return;
 
-    trapHistory();
-    trapHistory();
+    pageStartRef.current = Date.now();
+
+    const markEngaged = () => {
+      const elapsed = Date.now() - pageStartRef.current;
+      if (elapsed >= MIN_ENGAGE_MS && maxScrollRef.current >= MIN_SCROLL_PX) {
+        engagedRef.current = true;
+      }
+    };
+
+    const onScroll = () => {
+      maxScrollRef.current = Math.max(maxScrollRef.current, window.scrollY);
+      markEngaged();
+    };
 
     const onPopState = () => {
+      markEngaged();
+      if (!engagedRef.current) {
+        trapHistory();
+        return;
+      }
       showOnce();
       trapHistory();
     };
 
     const onMouseLeave = (event: MouseEvent) => {
+      if (isTouchDevice()) return;
       if (event.clientY > 0) return;
+      markEngaged();
+      if (!engagedRef.current) return;
       showOnce();
-    };
-
-    let maxScroll = 0;
-    let lastScrollY = window.scrollY;
-    let scrollUpDelta = 0;
-    let scrollRaf = 0;
-    const pageStart = Date.now();
-
-    const onScroll = () => {
-      if (scrollRaf) return;
-      scrollRaf = window.requestAnimationFrame(() => {
-        scrollRaf = 0;
-        const y = window.scrollY;
-        maxScroll = Math.max(maxScroll, y);
-
-        if (y < lastScrollY - 6) {
-          scrollUpDelta += lastScrollY - y;
-        } else if (y > lastScrollY + 6) {
-          scrollUpDelta = 0;
-        }
-
-        const engaged = Date.now() - pageStart > 5000;
-        const readEnough = maxScroll > 320;
-        const scrollingUpToLeave = scrollUpDelta > 140 && y < maxScroll * 0.5;
-
-        if (engaged && readEnough && scrollingUpToLeave) {
-          showOnce();
-        }
-
-        lastScrollY = y;
-      });
     };
 
     const onPageShow = (event: PageTransitionEvent) => {
@@ -102,20 +97,36 @@ export default function ExitIntentOffer({
       }
     };
 
-    window.addEventListener('popstate', onPopState);
+    const armBackTrap = () => {
+      trapHistory();
+      trapHistory();
+    };
+
+    const onFirstInteraction = () => {
+      armBackTrap();
+      window.removeEventListener('pointerdown', onFirstInteraction);
+      window.removeEventListener('keydown', onFirstInteraction);
+    };
+
     window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('popstate', onPopState);
     window.addEventListener('pageshow', onPageShow);
+    window.addEventListener('pointerdown', onFirstInteraction, { passive: true });
+    window.addEventListener('keydown', onFirstInteraction);
 
     if (!isTouchDevice()) {
       document.addEventListener('mouseleave', onMouseLeave);
     }
 
+    onScroll();
+
     return () => {
-      window.removeEventListener('popstate', onPopState);
       window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('popstate', onPopState);
       window.removeEventListener('pageshow', onPageShow);
+      window.removeEventListener('pointerdown', onFirstInteraction);
+      window.removeEventListener('keydown', onFirstInteraction);
       document.removeEventListener('mouseleave', onMouseLeave);
-      if (scrollRaf) window.cancelAnimationFrame(scrollRaf);
     };
   }, [productId, showOnce]);
 

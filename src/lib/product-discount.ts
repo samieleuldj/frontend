@@ -1,4 +1,4 @@
-export const EXIT_DISCOUNT_DZD = 200;
+export const EXIT_DISCOUNT_DZD = 100;
 
 export function exitOfferStorageKey(productId: string): string {
   return `cdz_exit_offer_${productId}`;

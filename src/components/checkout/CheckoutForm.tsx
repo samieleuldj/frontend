@@ -5,6 +5,7 @@ import {
   formatShippingLabel,
   getShippingCost,
   getShippingRate,
+  getWilayaCode,
   isDeskDeliveryAvailable,
 } from '@/data/shipping-rates';
 import { getCommunesForWilaya } from '@/data/communes';
@@ -402,6 +403,13 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
             </option>
           </select>
           {deliveryError && <p className="text-red-500 text-xs mt-1 font-bold">{deliveryError}</p>}
+          {wilaya && deliveryType === 'office' && (
+            <p className="text-xs text-amber-800 mt-2 bg-amber-50 border border-amber-100 rounded-lg p-2 leading-relaxed">
+              {getWilayaCode(wilaya) === '16' || getWilayaCode(wilaya) === '09'
+                ? '🏢 مكاتب DHD متعددة في هذه الولاية — اختر بلديتك الأقرب للمكتب.'
+                : '🏢 الاستلام من مكتب DHD في عاصمة الولاية (ليس في كل البلديات). نتصل بك لتحديد المكتب.'}
+            </p>
+          )}
           {wilaya && deliveryType === 'home' && (
             <p className="text-xs text-gray-500 mt-1">السعر حسب تعريفة DHD للولاية المختارة</p>
           )}
