@@ -15,8 +15,10 @@ type ExitIntentOfferProps = {
   discount?: number;
 };
 
-const MIN_ENGAGE_MS = 12000;
-const MIN_SCROLL_PX = 280;
+/** Ignore spurious popstate right after load (in-app browsers). */
+const MIN_PAGE_MS = 8000;
+/** Must interact with checkout before any offer can appear. */
+const MIN_FORM_DWELL_MS = 3000;
 
 function isTouchDevice(): boolean {
   if (typeof window === 'undefined') return false;
@@ -43,40 +45,49 @@ export default function ExitIntentOffer({
 }: ExitIntentOfferProps) {
   const [open, setOpen] = useState(false);
   const shownRef = useRef(false);
-  const engagedRef = useRef(false);
-  const maxScrollRef = useRef(0);
   const pageStartRef = useRef(Date.now());
+  const formFocusSinceRef = useRef<number | null>(null);
+  const trapArmedRef = useRef(false);
   const salePrice = basePrice - discount;
+
+  const canOffer = useCallback(() => {
+    if (Date.now() - pageStartRef.current < MIN_PAGE_MS) return false;
+    if (formFocusSinceRef.current === null) return false;
+    return Date.now() - formFocusSinceRef.current >= MIN_FORM_DWELL_MS;
+  }, []);
+
+  const armTrapIfReady = useCallback(() => {
+    if (trapArmedRef.current || !canOffer()) return;
+    trapArmedRef.current = true;
+    trapHistory();
+    trapHistory();
+  }, [canOffer]);
 
   const showOnce = useCallback(() => {
     if (shownRef.current || wasExitOfferShown(productId)) return;
-    if (!engagedRef.current) return;
+    if (!canOffer()) return;
     shownRef.current = true;
     markExitOfferShown(productId);
     setOpen(true);
-  }, [productId]);
+  }, [productId, canOffer]);
 
   useEffect(() => {
     if (wasExitOfferShown(productId)) return;
 
     pageStartRef.current = Date.now();
 
-    const markEngaged = () => {
-      const elapsed = Date.now() - pageStartRef.current;
-      if (elapsed >= MIN_ENGAGE_MS && maxScrollRef.current >= MIN_SCROLL_PX) {
-        engagedRef.current = true;
-      }
-    };
+    const form = document.getElementById('order-form');
 
-    const onScroll = () => {
-      maxScrollRef.current = Math.max(maxScrollRef.current, window.scrollY);
-      markEngaged();
+    const onFormFocusIn = () => {
+      if (formFocusSinceRef.current === null) {
+        formFocusSinceRef.current = Date.now();
+      }
+      window.setTimeout(armTrapIfReady, MIN_FORM_DWELL_MS + 50);
     };
 
     const onPopState = () => {
-      markEngaged();
-      if (!engagedRef.current) {
-        trapHistory();
+      if (!canOffer()) {
+        if (trapArmedRef.current) trapHistory();
         return;
       }
       showOnce();
@@ -85,50 +96,33 @@ export default function ExitIntentOffer({
 
     const onMouseLeave = (event: MouseEvent) => {
       if (isTouchDevice()) return;
-      if (event.clientY > 0) return;
-      markEngaged();
-      if (!engagedRef.current) return;
+      if (event.clientY > 8) return;
+      if (!canOffer()) return;
+      armTrapIfReady();
       showOnce();
     };
 
     const onPageShow = (event: PageTransitionEvent) => {
-      if (event.persisted) {
+      if (event.persisted && trapArmedRef.current) {
         trapHistory();
       }
     };
 
-    const armBackTrap = () => {
-      trapHistory();
-      trapHistory();
-    };
-
-    const onFirstInteraction = () => {
-      armBackTrap();
-      window.removeEventListener('pointerdown', onFirstInteraction);
-      window.removeEventListener('keydown', onFirstInteraction);
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
+    form?.addEventListener('focusin', onFormFocusIn);
     window.addEventListener('popstate', onPopState);
     window.addEventListener('pageshow', onPageShow);
-    window.addEventListener('pointerdown', onFirstInteraction, { passive: true });
-    window.addEventListener('keydown', onFirstInteraction);
 
     if (!isTouchDevice()) {
       document.addEventListener('mouseleave', onMouseLeave);
     }
 
-    onScroll();
-
     return () => {
-      window.removeEventListener('scroll', onScroll);
+      form?.removeEventListener('focusin', onFormFocusIn);
       window.removeEventListener('popstate', onPopState);
       window.removeEventListener('pageshow', onPageShow);
-      window.removeEventListener('pointerdown', onFirstInteraction);
-      window.removeEventListener('keydown', onFirstInteraction);
       document.removeEventListener('mouseleave', onMouseLeave);
     };
-  }, [productId, showOnce]);
+  }, [productId, showOnce, armTrapIfReady, canOffer]);
 
   useEffect(() => {
     if (!open) return;
