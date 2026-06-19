@@ -6,7 +6,8 @@ import { products } from '@/data/products';
 
 // Upsell Logic Matrix
 const UPSELL_MATRIX: Record<string, string> = {
-  'cellulite-device': 'orthopedic-pillow',
+  'cellulite-device': 'mini-clima-geant',
+  'mini-clima-geant': 'orthopedic-pillow',
   'lumbar-belt': 'car-cushion',
   'car-cushion': 'orthopedic-pillow',
   'orthopedic-pillow': 'cellulite-device',

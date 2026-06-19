@@ -1,24 +1,20 @@
+'use client';
+
 import Script from 'next/script';
-
-export const dynamic = 'force-dynamic';
-
-function getMetaPixelId(): string {
-  return (
-    process.env.META_PIXEL_ID ||
-    process.env.NEXT_PUBLIC_META_PIXEL_ID ||
-    ''
-  ).trim();
-}
+import { usePathname } from 'next/navigation';
+import { getMetaPixelIdForPath } from '@/lib/meta-pixel';
 
 export default function MetaPixel() {
-  const pixelId = getMetaPixelId();
-  if (!pixelId || pixelId === 'your_meta_pixel_id') {
+  const pathname = usePathname();
+  const pixelId = getMetaPixelIdForPath(pathname);
+
+  if (!pixelId) {
     return null;
   }
 
   return (
     <>
-      <Script id="meta-pixel" strategy="afterInteractive">
+      <Script id={`meta-pixel-${pixelId}`} strategy="afterInteractive">
         {`
           !function(f,b,e,v,n,t,s)
           {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
