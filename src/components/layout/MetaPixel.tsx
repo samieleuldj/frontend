@@ -2,11 +2,31 @@
 
 import Script from 'next/script';
 import { usePathname } from 'next/navigation';
-import { getMetaPixelIdForPath } from '@/lib/meta-pixel';
+import { getMetaPixelIdForPath, getMetaPixelIdForProduct } from '@/lib/meta-pixel';
 
 export default function MetaPixel() {
   const pathname = usePathname();
-  const pixelId = getMetaPixelIdForPath(pathname);
+  
+  // Try to get pixel ID from pending purchase first (for thank-you page)
+  let pixelId = '';
+  if (typeof window !== 'undefined') {
+    const pendingRaw = window.sessionStorage.getItem('cdz_pending_purchase');
+    if (pendingRaw) {
+      try {
+        const pending = JSON.parse(pendingRaw);
+        if (pending && pending.productId) {
+          pixelId = getMetaPixelIdForProduct(pending.productId);
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+  }
+
+  // Fallback to pathname if not on thank-you page or no pending purchase
+  if (!pixelId) {
+    pixelId = getMetaPixelIdForPath(pathname);
+  }
 
   if (!pixelId) {
     return null;
