@@ -161,8 +161,13 @@ export const products: Product[] = [
     reviewCount: 52,
     images: [
       '/products/mini-clima-geant/hero.png',
-      '/products/mini-clima-geant/usage.png',
+      '/products/mini-clima-geant/real-product.png',
+      '/products/mini-clima-geant/led-blue.png',
+      '/products/mini-clima-geant/led-red.png',
+      '/products/mini-clima-geant/led-green.png',
     ],
+    beforeImage: '/products/mini-clima-geant/problem.png',
+    afterImage: '/products/mini-clima-geant/solution.png',
     usageSteps: [
       'املأ خزان الماء (ماء بارد = تبريد أقوى).',
       'وصّل الجهاز بـ USB (شاحن أو Power Bank).',
@@ -170,16 +175,16 @@ export const products: Product[] = [
       'وجّهه نحوك — انتعاش يدوم ساعات.',
     ],
     problemText:
-      'الحر في الجزائر، القعدة في المكتب، أو النوم في غرفة ما فيهاش مكيف... المروحة العادية تنفخ هواء حار وما تعطيكش الراحة.',
+      'الحرارة قاتلة النوم! مروحة عادية تنفخ هواء حار وما تخليكش ترتاح. ليلة صيفية لا تطاق، تعرق وتعب مستمر.',
     solutionText:
-      'Mini Clima Geant 3 في 1 يبرد، يرطّب وينقّي الهواء. صغير، يخدم بـ USB، فيه 3 سرعات وإضاءة LED — تحطّو في أي بلاصة: غرفة، مكتب، أو سفر.',
+      'حل الحرارة في كل وقت! برودة منعشة وراحة تدوم. Mini Clima Geant 3 في 1 يبرد، يرطّب وينقّي الهواء. هواء بارد ومنعش، هادئ جداً، واستهلاك منخفض للطاقة.',
     features: [
       '3 في 1: تبريد + ترطيب + تنقية الهواء',
-      '3 سرعات تهوية + إضاءة LED',
+      '3 سرعات تهوية + إضاءة LED متعددة الألوان',
       'يعمل عبر USB — شاحن أو Power Bank',
       'خزان ماء — انتعاش لساعات',
       'خفيف ومحمول — منزل، مكتب، سفر',
-      'Géant Electronics — استهلاك منخفض',
+      'Géant Electronics — استهلاك منخفض للطاقة',
     ],
     reviews: [
       {
