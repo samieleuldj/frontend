@@ -7,10 +7,11 @@ import { products } from '@/data/products';
 // Upsell Logic Matrix
 const UPSELL_MATRIX: Record<string, string> = {
   'cellulite-device': 'mini-clima-geant',
+  'thermal-massage-brace': 'lumbar-belt',
   'mini-clima-geant': 'orthopedic-pillow',
-  'lumbar-belt': 'car-cushion',
+  'lumbar-belt': 'thermal-massage-brace',
   'car-cushion': 'orthopedic-pillow',
-  'orthopedic-pillow': 'cellulite-device',
+  'orthopedic-pillow': 'thermal-massage-brace',
 };
 
 export default function CartDrawer({ 
