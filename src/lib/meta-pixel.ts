@@ -6,6 +6,8 @@ const PIXEL_BY_PRODUCT: Record<string, string | undefined> = {
     process.env.META_PIXEL_ID,
   'mini-clima-geant':
     process.env.NEXT_PUBLIC_META_PIXEL_MINI_CLIMA_GEANT || '1061415349433201',
+  'thermal-massage-brace':
+    process.env.NEXT_PUBLIC_META_PIXEL_THERMAL_MASSAGE || '1280276840966709',
 };
 
 export function getMetaPixelIdForProduct(productId: string): string {
