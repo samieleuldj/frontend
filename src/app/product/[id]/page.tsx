@@ -246,7 +246,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-10 -mt-10"></div>
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-5 rounded-full -ml-8 -mb-8"></div>
               
-              <h2 className="text-2xl font-black mb-6 relative z-10">علاش تشري من كونفور ديزاد؟</h2>
+              <h2 className="text-2xl font-black mb-6 relative z-10">علاش تشري من فيلورا ديزاد؟</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
                 <div className="flex gap-4">
                   <div className="text-3xl">🥇</div>

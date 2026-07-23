@@ -7,7 +7,7 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <span className="text-2xl font-black text-primary tracking-tight">
-            كونفور <span className="text-secondary">ديزاد</span>
+            فيلورا <span className="text-secondary">ديزاد</span>
           </span>
         </Link>
 

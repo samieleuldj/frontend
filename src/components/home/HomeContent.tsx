@@ -21,14 +21,14 @@ export default function HomeContent() {
       <section className="bg-gradient-to-b from-blue-50 to-white py-12 md:py-20">
         <div className="container mx-auto px-4 text-center">
           <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-blue-100 mb-6 text-sm font-bold text-primary">
-            <span className="animate-pulse">🟢</span> المتجر رقم #1 لمنتجات الراحة في الجزائر
+            <span className="animate-pulse">🟢</span> متجر premium لمنتجات مختارة في الجزائر
           </div>
           <h1 className="text-4xl md:text-6xl font-black text-text mb-4 leading-tight">
-            تخلص من <span className="text-accent">آلام الظهر والرقبة</span><br className="hidden md:block" />
-            واسترجع راحتك اليومية
+            منتجات <span className="text-accent">مختارة بعناية</span><br className="hidden md:block" />
+            للبيت، الجمال والراحة
           </h1>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-            منتجات طبية ومريحة مجربة من طرف آلاف الجزائريين. الدفع عند الاستلام والتوصيل لـ 58 ولاية.
+            راحة، جمال، أدوات منزلية وصحية — كل منتج بصفحة خاصة وضمان الدفع عند الاستلام. توصيل لـ 58 ولاية.
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
@@ -127,7 +127,7 @@ export default function HomeContent() {
 
       <section id="reviews" className="py-16 bg-white border-t border-gray-100">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl font-black text-text mb-8">آلاف الجزائريين يثقون في كونفور ديزاد</h2>
+          <h2 className="text-2xl font-black text-text mb-8">آلاف الجزائريين يثقون في فيلورا ديزاد</h2>
           <div className="flex flex-wrap justify-center gap-4">
             <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 max-w-xs text-right">
               <div className="flex text-yellow-400 text-sm mb-2">⭐⭐⭐⭐⭐</div>

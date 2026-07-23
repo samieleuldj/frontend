@@ -9,10 +9,10 @@ export default function Footer() {
           {/* Brand Info */}
           <div>
             <h3 className="text-2xl font-black mb-4">
-              كونفور <span className="text-secondary">ديزاد</span>
+              فيلورا <span className="text-secondary">ديزاد</span>
             </h3>
             <p className="text-gray-400 leading-relaxed mb-4">
-              المتجر الجزائري الأول المتخصص في منتجات الراحة اليومية. هدفنا تحسين جودة حياتك بمنتجات أصلية ومضمونة.
+              متجر جزائري premium لمنتجات مختارة: راحة، جمال، أدوات منزلية وصحية. منتجات أصلية، الدفع عند الاستلام.
             </p>
           </div>
 
@@ -44,7 +44,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <span>✉️</span>
-                <span>contact@confortdz.shop</span>
+                <span>contact@veloradz.shop</span>
               </li>
               <li className="mt-4">
                 <div className="flex gap-2 items-center text-sm bg-gray-800 p-3 rounded-lg">
@@ -57,7 +57,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 pt-6 text-center text-gray-500 text-sm">
-          <p>© {new Date().getFullYear()} كونفور ديزاد (Confort DZ). جميع الحقوق محفوظة.</p>
+          <p>© {new Date().getFullYear()} فيلورا ديزاد (Velora DZ). جميع الحقوق محفوظة.</p>
         </div>
       </div>
     </footer>

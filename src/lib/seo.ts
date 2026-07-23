@@ -1,29 +1,28 @@
 import type { Metadata } from 'next';
 
 export const siteConfig = {
-  name: 'Confort DZ',
-  nameAr: 'كونفور ديزاد',
-  tagline: 'منتجات الراحة اليومية في الجزائر',
+  name: 'Velora DZ',
+  nameAr: 'فيلورا ديزاد',
+  tagline: 'منتجات مميزة للبيت والجمال والراحة في الجزائر',
   description:
-    'المتجر الأول في الجزائر لمنتجات الراحة: حزام الظهر، وسادة السيارة، وسادة النوم الطبية، جهاز السيلوليت. الدفع عند الاستلام والتوصيل لـ 58 ولاية.',
+    'متجر Velora DZ — منتجات مختارة: راحة، جمال، أدوات منزلية وصحية. كل منتج بصفحة خاصة، الدفع عند الاستلام والتوصيل لـ 58 ولاية.',
   locale: 'ar_DZ',
   keywords: [
     'متجر الجزائر',
     'دفع عند الاستلام',
     'توصيل 58 ولاية',
     'منتجات الراحة',
-    'حزام الظهر',
-    'وسادة السيارة',
-    'وسادة طبية',
-    'جهاز سيلوليت',
-    'Confort DZ',
-    'confortdz',
+    'منتجات الجمال',
+    'أدوات منزلية',
+    'Velora DZ',
+    'veloradz',
+    'فيلورا ديزاد',
   ],
   defaultOgImage: '/products/cellulite-device/hero.png',
 };
 
 export function getSiteUrl(): string {
-  const url = process.env.NEXT_PUBLIC_SITE_URL || 'https://confortdz.shop';
+  const url = process.env.NEXT_PUBLIC_SITE_URL || 'https://veloradz.shop';
   return url.replace(/\/$/, '');
 }
 

@@ -6,7 +6,7 @@ import ThankYouPixel from '@/components/tracking/ThankYouPixel';
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'تم تأكيد الطلب',
-  description: 'صفحة تأكيد الطلب — كونفور ديزاد',
+  description: 'صفحة تأكيد الطلب — فيلورا ديزاد',
   path: '/thank-you',
   noIndex: true,
 });

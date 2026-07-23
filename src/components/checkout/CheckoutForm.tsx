@@ -23,7 +23,7 @@ const WILAYAS = [
   "21 - سكيكدة", "22 - سيدي بلعباس", "23 - عنابة", "24 - قالمة", "25 - قسنطينة", "26 - المدية", "27 - مستغانم", "28 - المسيلة", "29 - معسكر", "30 - ورقلة",
   "31 - وهران", "32 - البيض", "33 - إليزي", "34 - برج بوعريريج", "35 - بومرداس", "36 - الطارف", "37 - تندوف", "38 - تيسمسيلت", "39 - الوادي", "40 - خنشلة",
   "41 - سوق أهراس", "42 - تيبازة", "43 - ميلة", "44 - عين الدفلى", "45 - النعامة", "46 - عين تموشنت", "47 - غرداية", "48 - غليزان",
-  "49 - المغير", "50 - المنيعة", "51 - أولاد جلال", "52 - برج باجي مختار", "53 - بني عباس", "54 - تقرت", "55 - جانت", "56 - عين صالح", "57 - إن قزام", "58 - إن أميناس"
+  "49 - تيميمون", "50 - برج باجي مختار", "51 - أولاد جلال", "52 - بني عباس", "53 - عين صالح", "54 - عين قزام", "55 - تقرت", "56 - جانت", "57 - المغير", "58 - المنيعة",
 ];
 
 interface CheckoutFormProps {
@@ -119,7 +119,7 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
     setSubmitError('');
 
     if (!canOrder) {
-      setSubmitError('الطلب متاح من الهاتف فقط. افتح confortdz.shop من هاتفك.');
+      setSubmitError('الطلب متاح من الهاتف فقط. افتح veloradz.shop من هاتفك.');
       return;
     }
 
@@ -144,6 +144,9 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
 
     if (!trimmedCommune) {
       setCommuneError('يرجى اختيار البلدية');
+      hasError = true;
+    } else if (communes.length > 0 && !communes.includes(trimmedCommune)) {
+      setCommuneError('اختر بلدية من القائمة — الاسم يجب أن يطابق المتجر');
       hasError = true;
     } else {
       setCommuneError('');
@@ -215,7 +218,7 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
       notes: discountNote,
     };
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.confortdz.shop';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.veloradz.shop';
 
     const apiPayload = {
       order_id: orderData.order_id,
@@ -281,7 +284,7 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
             لحماية المتجر من الطلبات الوهمية، الطلب متاح من <strong>الهاتف</strong> فقط.
           </p>
           <p className="text-sm text-gray-500">
-            افتح <strong>confortdz.shop</strong> من هاتفك وعبّي الفورم.
+            افتح <strong>veloradz.shop</strong> من هاتفك وعبّي الفورم.
           </p>
         </div>
       </div>
@@ -491,3 +494,4 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
     </form>
   );
 }
+

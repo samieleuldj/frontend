@@ -60,16 +60,15 @@ const RATES: Record<string, ShippingRate> = {
   '47': { home: 900, desk: 500 },
   '48': { home: 700, desk: 400 },
   '49': { home: 1300, desk: 600 },
+  '50': { home: 1300, desk: 600 },
   '51': { home: 900, desk: 500 },
-  // Form codes 50–58 (new wilayas — mapped to courier tariffs)
-  '50': { home: 1000, desk: 500 }, // المنيعة → El Meniaa (courier 58)
-  '52': { home: 1300, desk: 600 }, // برج باجي مختar — remote estimate
-  '53': { home: 1300, desk: 0 }, // بنi عbاس → Beni Abbes (courier 52)
-  '54': { home: 900, desk: 500 }, // تقrt → Touggourt (courier 55)
-  '55': { home: 1300, desk: 600 }, // جant — remote estimate
-  '56': { home: 1300, desk: 600 }, // عin صalh → In Salah (courier 53)
-  '57': { home: 1300, desk: 600 }, // إn قzam — remote estimate
-  '58': { home: 900, desk: 0 }, // إn أمinas → El M'Ghair (courier 57)
+  '52': { home: 1300, desk: 0 },
+  '53': { home: 1300, desk: 600 },
+  '54': { home: 1300, desk: 600 },
+  '55': { home: 900, desk: 500 },
+  '56': { home: 1300, desk: 600 },
+  '57': { home: 900, desk: 0 },
+  '58': { home: 1000, desk: 500 },
 };
 
 const DEFAULT_RATE: ShippingRate = { home: 900, desk: 500 };

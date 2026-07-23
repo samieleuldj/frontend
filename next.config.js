@@ -1,6 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  async redirects() {
+    return [
+      {
+        source: '/admin',
+        destination: 'https://api.veloradz.shop/admin',
+        permanent: false,
+      },
+      {
+        source: '/admin/:path*',
+        destination: 'https://api.veloradz.shop/admin/:path*',
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {
