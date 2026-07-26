@@ -215,8 +215,8 @@ export const products: Product[] = [
     name: 'Mini Clima Geant 3 في 1 — مكيف محمول',
     description:
       'مكيف هواء محمول من Géant Electronics — تبريد، ترطيب وتنقية الهواء في جهاز واحد. يعمل بـ USB، 3 سرعات، إضاءة LED، خزان ماء وانتعاش لساعات. مثالي للغرفة، المكتب والسفر.',
-    price: 3900,
-    oldPrice: 4900,
+    price: 2900,
+    oldPrice: 3900,
     badge: 'جديد ✨',
     rating: 4.8,
     reviewCount: 52,
