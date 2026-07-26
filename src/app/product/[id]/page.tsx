@@ -14,6 +14,9 @@ import StickyOrderBar from '@/components/product/StickyOrderBar';
 import JsonLd from '@/components/seo/JsonLd';
 import { DEFAULT_REVIEWS } from '@/data/products';
 import { buildPageMetadata, productJsonLd, siteConfig } from '@/lib/seo';
+import { getProductWithLivePrice } from '@/lib/product-prices';
+
+export const dynamic = 'force-dynamic';
 
 const DEFAULT_PROBLEM_TEXT =
   'الجلوس الطويل، السياقة لمسافات، أو حتى طريقة النوم الخاطئة... كلها تسبب ضغطاً كبيراً على جسمك، مما يؤدي إلى تعب مستمر يمنعك من الاستمتاع بيومك والتركيز في عملك.';
@@ -21,16 +24,18 @@ const DEFAULT_PROBLEM_TEXT =
 const DEFAULT_SOLUTION_TEXT =
   'هذا المنتج مصمم خصيصاً ليوفر لك الدعم والراحة التي يفتقدها جسمك. ليس مجرد منتج عادي، بل هو استثمار في راحتك اليومية.';
 
-export function generateMetadata({
+export async function generateMetadata({
   params,
 }: {
   params: { id: string };
-}): Metadata {
-  const product = products.find((p) => p.id === params.id);
+}): Promise<Metadata> {
+  const base = products.find((p) => p.id === params.id);
 
-  if (!product) {
+  if (!base) {
     return { title: 'منتج غير موجود' };
   }
+
+  const product = await getProductWithLivePrice(base);
 
   return buildPageMetadata({
     title: `${product.name} — ${product.price} دج | دفع عند الاستلام`,
@@ -41,12 +46,14 @@ export function generateMetadata({
   });
 }
 
-export default function ProductPage({ params }: { params: { id: string } }) {
-  const product = products.find(p => p.id === params.id);
+export default async function ProductPage({ params }: { params: { id: string } }) {
+  const base = products.find(p => p.id === params.id);
 
-  if (!product) {
+  if (!base) {
     notFound();
   }
+
+  const product = await getProductWithLivePrice(base);
 
   const problemText = product.problemText || DEFAULT_PROBLEM_TEXT;
   const solutionText = product.solutionText || DEFAULT_SOLUTION_TEXT;

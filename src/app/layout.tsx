@@ -7,6 +7,7 @@ import Footer from '@/components/layout/Footer';
 import MetaPixel from '@/components/layout/MetaPixel';
 import TrackingPixels from '@/components/layout/TrackingPixels';
 import AnalyticsTracker from '@/components/layout/AnalyticsTracker';
+import LiveStorefrontPrices from '@/components/product/LiveStorefrontPrices';
 import JsonLd from '@/components/seo/JsonLd';
 import {
   buildPageMetadata,
@@ -63,6 +64,7 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <AnalyticsTracker />
         </Suspense>
+        <LiveStorefrontPrices />
         <Header />
         <main className="flex-grow">
           {children}

@@ -16,6 +16,7 @@ import {
   EXIT_DISCOUNT_DZD,
   getStoredDiscount,
 } from '@/lib/product-discount';
+import { LIVE_PRICE_EVENT } from '@/components/product/LiveStorefrontPrices';
 
 const WILAYAS = [
   "01 - أدرار", "02 - الشلف", "03 - الأغواط", "04 - أم البواقي", "05 - باتنة", "06 - بجاية", "07 - بسكرة", "08 - بشار", "09 - البليدة", "10 - البويرة",
@@ -42,7 +43,8 @@ function isMobileDevice(): boolean {
 }
 
 export default function CheckoutForm({ productId, productName, price }: CheckoutFormProps) {
-  const maxQuantity = price >= 5000 ? 2 : 4;
+  const [livePrice, setLivePrice] = useState(price);
+  const maxQuantity = livePrice >= 5000 ? 2 : 4;
   const [quantity, setQuantity] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [canOrder, setCanOrder] = useState(true);
@@ -67,9 +69,13 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
     return getShippingCost(wilaya, deliveryType);
   }, [wilaya, deliveryType]);
 
-  const unitPrice = price - exitDiscount;
+  const unitPrice = livePrice - exitDiscount;
   const baseTotal = unitPrice * quantity;
   const total = baseTotal + (deliveryCost ?? 0);
+
+  useEffect(() => {
+    setLivePrice(price);
+  }, [price]);
 
   useEffect(() => {
     setCanOrder(isMobileDevice());
@@ -85,8 +91,20 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
       }
     };
 
+    const onLivePrice = (event: Event) => {
+      const detail = (event as CustomEvent<Record<string, { price?: number }>>).detail;
+      const entry = detail?.[productId];
+      if (entry && typeof entry.price === 'number') {
+        setLivePrice(entry.price);
+      }
+    };
+
     window.addEventListener(DISCOUNT_EVENT, onDiscount);
-    return () => window.removeEventListener(DISCOUNT_EVENT, onDiscount);
+    window.addEventListener(LIVE_PRICE_EVENT, onLivePrice);
+    return () => {
+      window.removeEventListener(DISCOUNT_EVENT, onDiscount);
+      window.removeEventListener(LIVE_PRICE_EVENT, onLivePrice);
+    };
   }, [productId]);
 
   useEffect(() => {
