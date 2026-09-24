@@ -155,7 +155,12 @@ export default async function ProductPage({ params }: { params: { id: string } }
                 )}
               </div>
 
-              <CheckoutForm productId={product.id} productName={product.name} price={product.price} />
+              <CheckoutForm
+                productId={product.id}
+                productName={product.name}
+                price={product.price}
+                requiresVehicleInfo={product.requiresVehicleInfo}
+              />
               <ConversionTrustBar />
             </div>
           </div>

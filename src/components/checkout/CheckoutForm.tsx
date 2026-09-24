@@ -17,6 +17,11 @@ import {
   getStoredDiscount,
 } from '@/lib/product-discount';
 import { LIVE_PRICE_EVENT } from '@/components/product/LiveStorefrontPrices';
+import {
+  CAR_CATALOG,
+  formatVehicleSelection,
+  getModelsForBrand,
+} from '@/data/car-brands';
 
 const WILAYAS = [
   "01 - أدرار", "02 - الشلف", "03 - الأغواط", "04 - أم البواقي", "05 - باتنة", "06 - بجاية", "07 - بسكرة", "08 - بشار", "09 - البليدة", "10 - البويرة",
@@ -31,6 +36,7 @@ interface CheckoutFormProps {
   productId: string;
   productName: string;
   price: number;
+  requiresVehicleInfo?: boolean;
 }
 
 function isMobileDevice(): boolean {
@@ -42,7 +48,12 @@ function isMobileDevice(): boolean {
   return mobileUA || smallScreen;
 }
 
-export default function CheckoutForm({ productId, productName, price }: CheckoutFormProps) {
+export default function CheckoutForm({
+  productId,
+  productName,
+  price,
+  requiresVehicleInfo = false,
+}: CheckoutFormProps) {
   const [livePrice, setLivePrice] = useState(price);
   const maxQuantity = livePrice >= 5000 ? 2 : 4;
   const [quantity, setQuantity] = useState(1);
@@ -61,6 +72,10 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
   const [communeError, setCommuneError] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [deliveryError, setDeliveryError] = useState('');
+  const [carBrandId, setCarBrandId] = useState('');
+  const [carModelId, setCarModelId] = useState('');
+  const [vehicleError, setVehicleError] = useState('');
+  const carModels = getModelsForBrand(carBrandId);
 
   const shippingRate = useMemo(() => getShippingRate(wilaya), [wilaya]);
   const communes = useMemo(() => getCommunesForWilaya(wilaya), [wilaya]);
@@ -199,6 +214,15 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
       hasError = true;
     }
 
+    if (requiresVehicleInfo) {
+      if (!carBrandId || !carModelId) {
+        setVehicleError('يرجى اختيار ماركة السيارة ثم الموديل');
+        hasError = true;
+      } else {
+        setVehicleError('');
+      }
+    }
+
     if (hasError) {
       return;
     }
@@ -213,8 +237,12 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
 
     setIsSubmitting(true);
 
-    const discountNote =
-      exitDiscount > 0 ? `خصم ${exitDiscount} دج (عرض خروج)` : '';
+    const vehicleNote = requiresVehicleInfo
+      ? `السيارة: ${formatVehicleSelection(carBrandId, carModelId)}`
+      : '';
+    const discountNote = [vehicleNote, exitDiscount > 0 ? `خصم ${exitDiscount} دج (عرض خروج)` : '']
+      .filter(Boolean)
+      .join(' | ');
 
     const orderId = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
     const orderData = {
@@ -334,6 +362,61 @@ export default function CheckoutForm({ productId, productName, price }: Checkout
           />
           {nameError && <p className="text-red-500 text-xs mt-1 font-bold">{nameError}</p>}
         </div>
+
+        {requiresVehicleInfo && (
+          <div className="rounded-xl border-2 border-primary/20 bg-gradient-to-b from-blue-50 to-white p-4 space-y-3">
+            <div>
+              <p className="text-sm font-black text-primary">🚗 سيارتك *</p>
+              <p className="text-xs text-gray-500 mt-1">
+                اختار الماركة ثم الموديل بالضبط — باش نوصلك الموكا المناسب
+              </p>
+            </div>
+            <div className="grid grid-cols-1 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">1. ماركة السيارة</label>
+                <select
+                  value={carBrandId}
+                  onChange={(e) => {
+                    setCarBrandId(e.target.value);
+                    setCarModelId('');
+                    setVehicleError('');
+                  }}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary outline-none bg-white font-medium"
+                >
+                  <option value="">— اختر الماركة —</option>
+                  {CAR_CATALOG.map((brand) => (
+                    <option key={brand.id} value={brand.id}>{brand.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">2. الموديل</label>
+                <select
+                  value={carModelId}
+                  disabled={!carBrandId}
+                  onChange={(e) => {
+                    setCarModelId(e.target.value);
+                    setVehicleError('');
+                  }}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary outline-none bg-white font-medium disabled:bg-gray-100 disabled:text-gray-400"
+                >
+                  <option value="">
+                    {carBrandId ? '— اختر الموديل —' : 'اختر الماركة أولاً'}
+                  </option>
+                  {carModels.map((model) => (
+                    <option key={model.id} value={model.id}>{model.label}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            {carBrandId && carModelId && (
+              <p className="text-xs font-bold text-green-700 bg-green-50 border border-green-100 rounded-lg px-3 py-2">
+                ✓ {formatVehicleSelection(carBrandId, carModelId)}
+              </p>
+            )}
+            {vehicleError && <p className="text-red-500 text-xs font-bold">{vehicleError}</p>}
+          </div>
+        )}
 
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-1">رقم الهاتف *</label>
