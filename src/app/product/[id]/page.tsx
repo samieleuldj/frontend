@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { products } from '@/data/products';
 import { notFound } from 'next/navigation';
+import HoodLandingPage from '@/components/product/HoodLandingPage';
 import Image from 'next/image';
 import CheckoutForm from '@/components/checkout/CheckoutForm';
 import ProductGallery from '@/components/product/ProductGallery';
@@ -11,7 +12,6 @@ import ProductViewPixel from '@/components/tracking/ProductViewPixel';
 import ExitIntentOffer from '@/components/product/ExitIntentOffer';
 import ProductPriceDisplay from '@/components/product/ProductPriceDisplay';
 import StickyOrderBar from '@/components/product/StickyOrderBar';
-import HoodInsulationLanding from '@/components/product/HoodInsulationLanding';
 import JsonLd from '@/components/seo/JsonLd';
 import { storeBrand } from '@/lib/store-brand';
 import { DEFAULT_REVIEWS } from '@/data/products';
@@ -49,6 +49,10 @@ export async function generateMetadata({
 }
 
 export default async function ProductPage({ params }: { params: { id: string } }) {
+  if (params.id === 'hood-insulation-mat') {
+    return <HoodLandingPage />;
+  }
+
   const base = products.find(p => p.id === params.id);
 
   if (!base) {

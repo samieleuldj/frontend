@@ -391,13 +391,11 @@ export const products: Product[] = [
     reviewCount: 67,
     requiresVehicleInfo: true,
     images: [
-      '/products/hood-insulation-mat/hero.png',
-      '/products/hood-insulation-mat/infographic.png',
+      '/products/hood-insulation-mat/solution.png',
       '/products/hood-insulation-mat/before.png',
-      '/products/hood-insulation-mat/after.png',
     ],
     beforeImage: '/products/hood-insulation-mat/before.png',
-    afterImage: '/products/hood-insulation-mat/after.png',
+    afterImage: '/products/hood-insulation-mat/solution.png',
     problemText:
       'كل يوم الموتور يطلع حرارة وضجيج يضربو في الكابو. العازل القديم يتشقق ويتفكك، الكابو يبان مهمل، والحرارة تدخل للمقصورة — خاصة مع الوقوف تحت الشمس.',
     solutionText:

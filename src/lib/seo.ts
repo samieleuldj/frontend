@@ -18,7 +18,7 @@ export const siteConfig = {
     'confortdz',
     'أوتو بلاس ديزاد',
   ],
-  defaultOgImage: '/products/hood-insulation-mat/hero.png',
+  defaultOgImage: '/products/hood-insulation-mat/solution.png',
 };
 
 export function getSiteUrl(): string {

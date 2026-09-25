@@ -1,14 +1,18 @@
 import type { Metadata } from 'next';
-import HomeContent from '@/components/home/HomeContent';
-import { buildPageMetadata, siteConfig } from '@/lib/seo';
+import HoodLandingPage from '@/components/product/HoodLandingPage';
+import { buildPageMetadata } from '@/lib/seo';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = buildPageMetadata({
-  title: `${siteConfig.nameAr} | ${siteConfig.tagline} — دفع عند الاستلام`,
-  description: siteConfig.description,
+  title: 'موكات عازلة تحت الكابو — 3900 دج | AUTO PLUS DZ',
+  description:
+    'موكات عزل تحت غطاء السيارة — تقلّل الحرارة والضجيج وتحمي الكابو. مقاس حسب ماركة وموديل سيارتك. الدفع عند الاستلام — توصيل 58 ولاية.',
   path: '/',
-  keywords: siteConfig.keywords,
+  image: '/products/hood-insulation-mat/solution.png',
+  keywords: ['موكات', 'عزل الكابو', 'أكسسوارات السيارات', 'AUTO PLUS DZ', 'دفع عند الاستلام'],
 });
 
 export default function HomePage() {
-  return <HomeContent />;
+  return <HoodLandingPage />;
 }

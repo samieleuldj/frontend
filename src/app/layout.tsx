@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { Cairo } from 'next/font/google';
 import './globals.css';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
+import SiteChrome from '@/components/layout/SiteChrome';
 import MetaPixel from '@/components/layout/MetaPixel';
 import TrackingPixels from '@/components/layout/TrackingPixels';
 import AnalyticsTracker from '@/components/layout/AnalyticsTracker';
@@ -65,11 +64,7 @@ export default function RootLayout({
           <AnalyticsTracker />
         </Suspense>
         <LiveStorefrontPrices />
-        <Header />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Footer />
+        <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
   );

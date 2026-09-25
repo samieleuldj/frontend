@@ -7,6 +7,9 @@ import StickyOrderBar from '@/components/product/StickyOrderBar';
 import type { Product, ProductReview } from '@/data/products';
 import { storeBrand } from '@/lib/store-brand';
 
+const PROBLEM_IMAGE = '/products/hood-insulation-mat/before.png';
+const SOLUTION_IMAGE = '/products/hood-insulation-mat/solution.png';
+
 const PROBLEMS = [
   {
     icon: '🚗',
@@ -21,7 +24,7 @@ const PROBLEMS = [
   {
     icon: '🔊',
     title: 'ضجيج الموتور يكون واضح أكثر',
-    desc: 'بدون عزل مناسب، صوت المحرك يدخل للمقصورة.',
+    desc: 'بدون موكات مناسبة، صوت المحرك يدخل للمقصورة.',
   },
   {
     icon: '🌡️',
@@ -38,7 +41,7 @@ type Props = {
 export default function HoodInsulationLanding({ product, reviews }: Props) {
   return (
     <div className="bg-zinc-950 min-h-screen pb-24 text-white">
-      {/* Hero landing strip */}
+      {/* Hero */}
       <section className="relative overflow-hidden border-b border-zinc-800">
         <div className="absolute inset-0 bg-gradient-to-b from-amber-500/10 via-transparent to-transparent pointer-events-none" />
         <div className="container mx-auto px-4 py-6 md:py-10">
@@ -48,39 +51,13 @@ export default function HoodInsulationLanding({ product, reviews }: Props) {
                 🚗 {product.badge || 'جديد'}
               </div>
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-black leading-tight">
-                الكابو تاع سيارتك يتعرض للحرارة والضجيج كل يوم...
-                <span className="text-amber-400"> وأنت ماكش حاسبله.</span>
+                {product.name}
               </h1>
               <p className="text-zinc-400 text-base md:text-lg leading-relaxed max-w-2xl">
-                كل ما تشعل السيارة، حرارة الموتور وضجيجو يضربو في الكابو من الداخل. مع الوقت العازل الأصلي يتآكل — خاصة مع الاستعمال اليومي والوقوف تحت الشمس ☀️
+                {product.description}
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl">
-                  <Image
-                    src="/products/hood-insulation-mat/infographic.png"
-                    alt="مشاكل عزل الكابو — حرارة وضجيج وتلف"
-                    width={800}
-                    height={1200}
-                    className="w-full h-auto"
-                    priority
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-                <div className="rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl">
-                  <Image
-                    src="/products/hood-insulation-mat/hero.png"
-                    alt="تركيب موكات عازلة تحت الكابو"
-                    width={800}
-                    height={800}
-                    className="w-full h-auto"
-                    priority
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-4 pt-2">
+              <div className="flex flex-wrap items-center gap-4">
                 <ProductPriceDisplay
                   productId={product.id}
                   price={product.price}
@@ -98,21 +75,23 @@ export default function HoodInsulationLanding({ product, reviews }: Props) {
 
               <a
                 href="#order-form"
-                className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-zinc-950 font-black text-lg px-8 py-4 rounded-full transition-all shadow-lg shadow-amber-400/20"
+                className="hidden lg:inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-zinc-950 font-black text-lg px-8 py-4 rounded-full transition-all shadow-lg shadow-amber-400/20"
               >
-                🚗 شوف الموكات المناسبة لسيارتي
+                🚗 اطلب الموكات المناسبة لسيارتي
               </a>
             </div>
 
-            <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-4">
-              <div className="hidden lg:block bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
-                <h2 className="text-xl font-black mb-1">{product.name}</h2>
-                <p className="text-zinc-400 text-sm mb-4">{product.description}</p>
-                <div className="flex items-center gap-2 text-sm text-amber-300 font-bold bg-amber-400/10 p-3 rounded-lg border border-amber-400/20">
-                  <span className="animate-pulse">🔥</span>
-                  طلب عالي — اختار ماركة وموديل سيارتك بالضبط
-                </div>
-              </div>
+            <div className="lg:hidden">
+              <CheckoutForm
+                productId={product.id}
+                productName={product.name}
+                price={product.price}
+                requiresVehicleInfo
+                variant="automotive"
+              />
+            </div>
+
+            <div className="hidden lg:block lg:col-span-5 lg:sticky lg:top-20 space-y-4">
               <CheckoutForm
                 productId={product.id}
                 productName={product.name}
@@ -126,89 +105,87 @@ export default function HoodInsulationLanding({ product, reviews }: Props) {
         </div>
       </section>
 
-      {/* Problem grid */}
-      <section className="py-12 md:py-16 bg-zinc-900/50">
+      {/* المشكلة — صورة المستخدم */}
+      <section className="py-10 md:py-14 bg-zinc-900/60 border-b border-zinc-800">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <span className="inline-block bg-amber-400 text-zinc-950 font-black px-4 py-1 rounded-md text-sm mb-4">
-              والنتيجة ؟
+          <div className="text-center mb-8">
+            <span className="inline-block bg-red-500/20 text-red-400 font-black px-4 py-1 rounded-md text-sm mb-3">
+              ⚠️ المشكلة
             </span>
-            <h2 className="text-2xl md:text-3xl font-black">4 مشاكل كي ما يكونش عندك موكات مناسبة</h2>
+            <h2 className="text-2xl md:text-3xl font-black">
+              الكابو تاع سيارتك يتعرض للحرارة والضجيج كل يوم
+            </h2>
+            <p className="text-zinc-400 mt-3 max-w-2xl mx-auto leading-relaxed">
+              {product.problemText}
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+          <div className="rounded-2xl overflow-hidden border-2 border-red-900/40 shadow-2xl max-w-5xl mx-auto">
+            <Image
+              src={PROBLEM_IMAGE}
+              alt="مشاكل الكابو — حرارة زائدة، ضجيج الموتور، وعازل متلف"
+              width={1200}
+              height={900}
+              className="w-full h-auto"
+              sizes="(max-width: 768px) 100vw, 900px"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8 max-w-5xl mx-auto">
             {PROBLEMS.map((item) => (
               <div
                 key={item.title}
-                className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 relative"
+                className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 relative"
               >
-                <span className="absolute top-3 left-3 text-red-500 font-black text-lg">✕</span>
-                <div className="text-3xl mb-3">{item.icon}</div>
-                <h3 className="font-black text-white mb-2">{item.title}</h3>
-                <p className="text-zinc-400 text-sm leading-relaxed">{item.desc}</p>
+                <span className="absolute top-2 left-2 text-red-500 font-black">✕</span>
+                <div className="text-2xl mb-2">{item.icon}</div>
+                <h3 className="font-bold text-sm text-white mb-1">{item.title}</h3>
+                <p className="text-zinc-500 text-xs leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-            <div className="rounded-2xl overflow-hidden border border-red-900/50">
-              <Image
-                src="/products/hood-insulation-mat/before.png"
-                alt="قبل — حرارة وضجيج وعازل متلف تحت الكابو"
-                width={900}
-                height={700}
-                className="w-full h-auto"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-2xl font-black text-red-400">قبل التركيب</h3>
-              <p className="text-zinc-300 text-lg leading-relaxed">{product.problemText}</p>
-              <ul className="space-y-2 text-zinc-400">
-                <li className="flex gap-2"><span className="text-red-400">●</span> حرارة زائدة تحت الكابو</li>
-                <li className="flex gap-2"><span className="text-red-400">●</span> ضجيج واضح من الموتور</li>
-                <li className="flex gap-2"><span className="text-red-400">●</span> عازل قديم متلف أو مفقود</li>
-              </ul>
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* Solution */}
-      <section className="py-12 md:py-16">
+      {/* الحل — صورة التركيب */}
+      <section className="py-10 md:py-14">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div className="space-y-4 order-2 md:order-1">
-              <h2 className="text-2xl md:text-3xl font-black">
-                والحل ماشي تبدل الكابو...
-                <span className="text-amber-400"> الحل يبدأ من العزل.</span>
-              </h2>
-              <p className="text-zinc-300 text-lg leading-relaxed">{product.solutionText}</p>
-              <p className="text-zinc-400">
-                سيارتك تستاهل موكات مناسبة ليها. اختار الماركة والموديل في الفورم — نوصلك المقاس الصحيح مع مشابك التثبيت.
-              </p>
-              <a
-                href="#order-form"
-                className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-zinc-950 font-black px-6 py-3 rounded-full transition-all"
-              >
-                أطلب موكات سيارتي ←
-              </a>
-            </div>
-            <div className="rounded-2xl overflow-hidden border border-emerald-900/50 order-1 md:order-2">
-              <Image
-                src="/products/hood-insulation-mat/after.png"
-                alt="بعد — تركيب موكات عازلة تحت الكابو"
-                width={900}
-                height={700}
-                className="w-full h-auto"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
+          <div className="text-center mb-8">
+            <span className="inline-block bg-emerald-500/20 text-emerald-400 font-black px-4 py-1 rounded-md text-sm mb-3">
+              ✅ الحل
+            </span>
+            <h2 className="text-2xl md:text-3xl font-black">
+              والحل ماشي تبدل الكابو...
+              <span className="text-amber-400"> الحل يبدأ من الموكات.</span>
+            </h2>
+            <p className="text-zinc-400 mt-3 max-w-2xl mx-auto leading-relaxed">
+              {product.solutionText}
+            </p>
+          </div>
+
+          <div className="rounded-2xl overflow-hidden border-2 border-emerald-900/40 shadow-2xl max-w-5xl mx-auto">
+            <Image
+              src={SOLUTION_IMAGE}
+              alt="تركيب الموكات العازلة تحت الكابو — AUTO PLUS DZ"
+              width={1200}
+              height={900}
+              className="w-full h-auto"
+              sizes="(max-width: 768px) 100vw, 900px"
+            />
+          </div>
+
+          <div className="text-center mt-8">
+            <a
+              href="#order-form"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-zinc-950 font-black text-lg px-8 py-4 rounded-full transition-all"
+            >
+              🚗 اطلب الموكات المناسبة لسيارتي — {product.price} دج
+            </a>
           </div>
         </div>
       </section>
 
-      {/* Features */}
+      {/* المميزات */}
       <section className="py-12 bg-zinc-900/50 border-y border-zinc-800">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-black mb-8 text-center">واش راح تستفاد من الموكات؟</h2>
@@ -226,7 +203,7 @@ export default function HoodInsulationLanding({ product, reviews }: Props) {
         </div>
       </section>
 
-      {/* Installation steps */}
+      {/* خطوات التركيب */}
       {product.usageSteps && product.usageSteps.length > 0 && (
         <section className="py-12">
           <div className="container mx-auto px-4 max-w-3xl">
@@ -248,7 +225,7 @@ export default function HoodInsulationLanding({ product, reviews }: Props) {
         </section>
       )}
 
-      {/* Trust — AUTO PLUS */}
+      {/* ثقة */}
       <section className="py-12 bg-gradient-to-br from-amber-500 to-amber-600 text-zinc-950">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-black mb-8 text-center">
@@ -258,7 +235,7 @@ export default function HoodInsulationLanding({ product, reviews }: Props) {
             {[
               { icon: '🥇', title: 'موكات مخصصة حسب سيارتك', desc: 'اختار الماركة والموديل — نوصلك المقاس المناسب.' },
               { icon: '🔄', title: 'استبدال ساهل', desc: 'مشكل في المقاس أو الجودة؟ نبدلوهلك بلا تعقيد.' },
-              { icon: '📞', title: 'نتصلو بيك للتأكيد', desc: 'قبل ما نبعت الطلبية، نتأكدو من معلومات سيارتك.' },
+              { icon: '📞', title: 'نتصلو بيك للتأكيد', desc: 'قبل ما نبعث الطلبية، نتأكدو من معلومات سيارتك.' },
               { icon: '🤝', title: 'خلص كي تستلم', desc: 'الدفع عند الاستلام — حقك مضمون 100%.' },
             ].map((item) => (
               <div key={item.title} className="flex gap-4 bg-white/20 backdrop-blur rounded-xl p-5">
@@ -273,7 +250,7 @@ export default function HoodInsulationLanding({ product, reviews }: Props) {
         </div>
       </section>
 
-      {/* Reviews */}
+      {/* تقييمات */}
       <section className="py-12 bg-zinc-950">
         <div className="container mx-auto px-4">
           <ProductReviews
@@ -296,11 +273,11 @@ export default function HoodInsulationLanding({ product, reviews }: Props) {
               },
               {
                 q: 'هل التركيب ساهل؟',
-                a: 'نعم — الموكات تجي مع ثقوب التثبيت ومشابك. التركيب ياخذ 15-30 دقيقة بدون أدوات خاصة.',
+                a: 'نعم — الموكات تجي مع ثقوب التثبيت ومشابك. التركيب ياخذ من 15 إلى 30 دقيقة بدون أدوات خاصة.',
               },
               {
                 q: 'هل التوصيل متوفر لولايتي؟',
-                a: 'نعم، نوصل لـ 58 ولاية. التوصيل 24-72 ساعة حسب الولاية.',
+                a: 'نعم، نوصل لـ 58 ولاية. التوصيل من 24 إلى 72 ساعة حسب الولاية.',
               },
               {
                 q: 'كيفاش نخلص؟',
@@ -319,16 +296,16 @@ export default function HoodInsulationLanding({ product, reviews }: Props) {
         </div>
       </section>
 
-      {/* Final CTA */}
+      {/* CTA أخير */}
       <section className="py-10 border-t border-zinc-800">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-2xl font-black mb-4">جاهز تحمي الكابو تاع سيارتك؟</h2>
-          <p className="text-zinc-400 mb-6">3900 دج — الدفع عند الاستلام — توصيل 58 ولاية</p>
+          <p className="text-zinc-400 mb-6">{product.price} دج — الدفع عند الاستلام — توصيل 58 ولاية</p>
           <a
             href="#order-form"
             className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-zinc-950 font-black text-xl px-10 py-4 rounded-full transition-all"
           >
-            🚗 اطلب موكات سيارتي الآن
+            🚗 اطلب الموكات الآن
           </a>
         </div>
       </section>
