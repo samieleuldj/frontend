@@ -15,7 +15,6 @@ export const siteConfig = {
     'موكات الكابو',
     'عزل الكابو',
     'AUTO PLUS DZ',
-    'confortdz',
     'أوتو بلاس ديزاد',
   ],
   defaultOgImage: '/products/hood-insulation-mat/solution.png',

@@ -6,7 +6,7 @@ const API_URL = (
   process.env.NEXT_PUBLIC_API_URL || 'https://api.confortdz.shop'
 ).replace(/\/$/, '');
 
-export const LIVE_PRICE_EVENT = 'confort-live-price';
+export const LIVE_PRICE_EVENT = 'autoplus-live-price';
 
 export default function LiveStorefrontPrices() {
   useEffect(() => {

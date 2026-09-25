@@ -5,7 +5,7 @@ export const storeBrand = {
   taglineAr: 'أكسسوارات السيارات',
   description:
     'متجر جزائري متخصص في أكسسوارات السيارات — عزل الكابو، حماية المحرك، ومنتجات تركيب سهلة. الدفع عند الاستلام والتوصيل لـ 58 ولاية.',
-  email: 'contact@confortdz.shop',
+  email: '',
   accentClass: 'text-amber-400',
 };
 
