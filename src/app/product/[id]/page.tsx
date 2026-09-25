@@ -34,9 +34,27 @@ export async function generateMetadata({
   });
 }
 
-export default async function ProductPage({ params }: { params: { id: string } }) {
+type SearchParams = {
+  car?: string;
+  brand?: string;
+  model?: string;
+};
+
+export default async function ProductPage({
+  params,
+  searchParams,
+}: {
+  params: { id: string };
+  searchParams?: SearchParams;
+}) {
   if (params.id === HOOD_ID) {
-    return <HoodLandingPage />;
+    return (
+      <HoodLandingPage
+        car={searchParams?.car}
+        brand={searchParams?.brand}
+        model={searchParams?.model}
+      />
+    );
   }
 
   if (params.id !== HOOD_ID) {

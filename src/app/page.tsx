@@ -13,6 +13,22 @@ export const metadata: Metadata = buildPageMetadata({
   keywords: ['موكات', 'عزل الكابو', 'أكسسوارات السيارات', 'AUTO PLUS DZ', 'دفع عند الاستلام'],
 });
 
-export default function HomePage() {
-  return <HoodLandingPage />;
+type SearchParams = {
+  car?: string;
+  brand?: string;
+  model?: string;
+};
+
+export default function HomePage({
+  searchParams,
+}: {
+  searchParams?: SearchParams;
+}) {
+  return (
+    <HoodLandingPage
+      car={searchParams?.car}
+      brand={searchParams?.brand}
+      model={searchParams?.model}
+    />
+  );
 }

@@ -40,6 +40,8 @@ interface CheckoutFormProps {
   price: number;
   requiresVehicleInfo?: boolean;
   variant?: 'default' | 'automotive';
+  initialBrandId?: string;
+  initialModelId?: string;
 }
 
 function isMobileDevice(): boolean {
@@ -57,6 +59,8 @@ export default function CheckoutForm({
   price,
   requiresVehicleInfo = false,
   variant = 'default',
+  initialBrandId = '',
+  initialModelId = '',
 }: CheckoutFormProps) {
   const siteHost = getSiteDisplayUrl();
   const isAutomotive = variant === 'automotive';
@@ -78,8 +82,8 @@ export default function CheckoutForm({
   const [communeError, setCommuneError] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [deliveryError, setDeliveryError] = useState('');
-  const [carBrandId, setCarBrandId] = useState('');
-  const [carModelId, setCarModelId] = useState('');
+  const [carBrandId, setCarBrandId] = useState(initialBrandId);
+  const [carModelId, setCarModelId] = useState(initialModelId);
   const [vehicleError, setVehicleError] = useState('');
   const carModels = getModelsForBrand(carBrandId);
   const checkoutTracked = useRef(false);
@@ -137,6 +141,11 @@ export default function CheckoutForm({
   useEffect(() => {
     setLivePrice(price);
   }, [price]);
+
+  useEffect(() => {
+    if (initialBrandId) setCarBrandId(initialBrandId);
+    if (initialModelId) setCarModelId(initialModelId);
+  }, [initialBrandId, initialModelId]);
 
   useEffect(() => {
     setCanOrder(isMobileDevice());

@@ -7,8 +7,10 @@ import ConversionTrustBar from '@/components/product/ConversionTrustBar';
 import ProductPriceDisplay from '@/components/product/ProductPriceDisplay';
 import StickyOrderBar from '@/components/product/StickyOrderBar';
 import SupportedBrandsBar from '@/components/product/SupportedBrandsBar';
+import VehiclePresetBanner from '@/components/product/VehiclePresetBanner';
 import type { Product, ProductReview } from '@/data/products';
 import { storeBrand } from '@/lib/store-brand';
+import type { VehiclePreset } from '@/lib/vehicle-presets';
 
 const DEFAULT_PROBLEM_TEXT =
   'الجلوس الطويل، السياقة لمسافات، أو حتى طريقة النوم الخاطئة... كلها تسبب ضغطاً كبيراً على جسمك.';
@@ -20,9 +22,15 @@ type Props = {
   product: Product;
   reviews: ProductReview[];
   hideBreadcrumb?: boolean;
+  vehiclePreset?: VehiclePreset | null;
 };
 
-export default function ProductPageContent({ product, reviews, hideBreadcrumb = false }: Props) {
+export default function ProductPageContent({
+  product,
+  reviews,
+  hideBreadcrumb = false,
+  vehiclePreset = null,
+}: Props) {
   const problemText = product.problemText || DEFAULT_PROBLEM_TEXT;
   const solutionText = product.solutionText || DEFAULT_SOLUTION_TEXT;
 
@@ -39,6 +47,11 @@ export default function ProductPageContent({ product, reviews, hideBreadcrumb = 
       )}
 
       <div className="container mx-auto px-4 py-8">
+        {vehiclePreset && (
+          <div className="mb-6 max-w-3xl mx-auto">
+            <VehiclePresetBanner headline={vehiclePreset.headline} label={vehiclePreset.label} />
+          </div>
+        )}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           <div className="lg:col-span-7 space-y-6 order-1">
             {product.images && product.images.length > 0 ? (
@@ -97,6 +110,8 @@ export default function ProductPageContent({ product, reviews, hideBreadcrumb = 
                 productName={product.name}
                 price={product.price}
                 requiresVehicleInfo={product.requiresVehicleInfo}
+                initialBrandId={vehiclePreset?.brandId}
+                initialModelId={vehiclePreset?.modelId}
               />
               <ConversionTrustBar />
             </div>
