@@ -1,28 +1,28 @@
 import type { Metadata } from 'next';
 
 export const siteConfig = {
-  name: 'Velora DZ',
-  nameAr: 'فيلورا ديزاد',
-  tagline: 'منتجات مميزة للبيت والجمال والراحة في الجزائر',
+  name: 'AUTO PLUS DZ',
+  nameAr: 'أوتو بلاس ديزاد',
+  tagline: 'أكسسوارات السيارات في الجزائر',
   description:
-    'متجر Velora DZ — منتجات مختارة: راحة، جمال، أدوات منزلية وصحية. كل منتج بصفحة خاصة، الدفع عند الاستلام والتوصيل لـ 58 ولاية.',
+    'متجر AUTO PLUS DZ — أكسسوارات السيارات: موكات عازلة للكابو، حماية المحرك، تركيب سهل. الدفع عند الاستلام والتوصيل لـ 58 ولاية.',
   locale: 'ar_DZ',
   keywords: [
     'متجر الجزائر',
     'دفع عند الاستلام',
     'توصيل 58 ولاية',
-    'منتجات الراحة',
-    'منتجات الجمال',
-    'أدوات منزلية',
-    'Velora DZ',
-    'veloradz',
-    'فيلورا ديزاد',
+    'أكسسوارات السيارات',
+    'موكات الكابو',
+    'عزل الكابو',
+    'AUTO PLUS DZ',
+    'confortdz',
+    'أوتو بلاس ديزاد',
   ],
-  defaultOgImage: '/products/cellulite-device/hero.png',
+  defaultOgImage: '/products/hood-insulation-mat/hero.png',
 };
 
 export function getSiteUrl(): string {
-  const url = process.env.NEXT_PUBLIC_SITE_URL || 'https://veloradz.shop';
+  const url = process.env.NEXT_PUBLIC_SITE_URL || 'https://confortdz.shop';
   return url.replace(/\/$/, '');
 }
 

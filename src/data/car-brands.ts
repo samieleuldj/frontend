@@ -9,7 +9,7 @@ export type CarBrandOption = {
   models: CarModelOption[];
 };
 
-/** Marques + modèles disponibles pour le tapis isolant capot (Confort DZ). */
+/** Marques + modèles disponibles pour les موكات isolantes capot (AUTO PLUS DZ). */
 export const CAR_CATALOG: CarBrandOption[] = [
   {
     id: 'volkswagen',

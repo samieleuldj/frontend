@@ -9,7 +9,7 @@ type TrackPayload = {
 };
 
 function getApiUrl(): string {
-  return process.env.NEXT_PUBLIC_API_URL || 'https://api.veloradz.shop';
+  return process.env.NEXT_PUBLIC_API_URL || 'https://api.confortdz.shop';
 }
 
 export function getSessionId(): string {

@@ -22,6 +22,7 @@ import {
   formatVehicleSelection,
   getModelsForBrand,
 } from '@/data/car-brands';
+import { getSiteDisplayUrl } from '@/lib/store-brand';
 
 const WILAYAS = [
   "01 - أدرار", "02 - الشلف", "03 - الأغواط", "04 - أم البواقي", "05 - باتنة", "06 - بجاية", "07 - بسكرة", "08 - بشار", "09 - البليدة", "10 - البويرة",
@@ -37,6 +38,7 @@ interface CheckoutFormProps {
   productName: string;
   price: number;
   requiresVehicleInfo?: boolean;
+  variant?: 'default' | 'automotive';
 }
 
 function isMobileDevice(): boolean {
@@ -53,7 +55,10 @@ export default function CheckoutForm({
   productName,
   price,
   requiresVehicleInfo = false,
+  variant = 'default',
 }: CheckoutFormProps) {
+  const siteHost = getSiteDisplayUrl();
+  const isAutomotive = variant === 'automotive';
   const [livePrice, setLivePrice] = useState(price);
   const maxQuantity = livePrice >= 5000 ? 2 : 4;
   const [quantity, setQuantity] = useState(1);
@@ -152,7 +157,7 @@ export default function CheckoutForm({
     setSubmitError('');
 
     if (!canOrder) {
-      setSubmitError('الطلب متاح من الهاتف فقط. افتح veloradz.shop من هاتفك.');
+      setSubmitError(`الطلب متاح من الهاتف فقط. افتح ${siteHost} من هاتفك.`);
       return;
     }
 
@@ -264,7 +269,7 @@ export default function CheckoutForm({
       notes: discountNote,
     };
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.veloradz.shop';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.confortdz.shop';
 
     const apiPayload = {
       order_id: orderData.order_id,
@@ -322,15 +327,24 @@ export default function CheckoutForm({
 
   if (!canOrder) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg border border-amber-200 p-6 md:p-8" id="order-form">
+      <div
+        className={`rounded-2xl shadow-lg p-6 md:p-8 ${
+          isAutomotive
+            ? 'bg-zinc-900 border border-zinc-700 text-white'
+            : 'bg-white border border-amber-200'
+        }`}
+        id="order-form"
+      >
         <div className="text-center">
           <div className="text-4xl mb-4">📱</div>
-          <h3 className="text-xl font-black text-text mb-3">الطلب من الهاتف فقط</h3>
-          <p className="text-gray-600 leading-relaxed mb-4">
+          <h3 className={`text-xl font-black mb-3 ${isAutomotive ? 'text-white' : 'text-text'}`}>
+            الطلب من الهاتف فقط
+          </h3>
+          <p className={`leading-relaxed mb-4 ${isAutomotive ? 'text-zinc-400' : 'text-gray-600'}`}>
             لحماية المتجر من الطلبات الوهمية، الطلب متاح من <strong>الهاتف</strong> فقط.
           </p>
-          <p className="text-sm text-gray-500">
-            افتح <strong>veloradz.shop</strong> من هاتفك وعبّي الفورم.
+          <p className={`text-sm ${isAutomotive ? 'text-zinc-500' : 'text-gray-500'}`}>
+            افتح <strong>{siteHost}</strong> من هاتفك وعبّي الفورم.
           </p>
         </div>
       </div>
@@ -338,10 +352,24 @@ export default function CheckoutForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 md:p-8" id="order-form">
+    <form
+      onSubmit={handleSubmit}
+      className={`rounded-2xl shadow-lg p-6 md:p-8 ${
+        isAutomotive
+          ? 'bg-zinc-900 border border-zinc-700 text-white'
+          : 'bg-white border border-gray-100'
+      }`}
+      id="order-form"
+    >
       <div className="mb-6 text-center">
-        <h3 className="text-2xl font-black text-text mb-2">أطلب الآن والدفع عند الاستلام</h3>
-        <p className="text-gray-500 text-sm">يرجى إدخال معلوماتك وسنتصل بك للتأكيد</p>
+        <h3 className={`text-2xl font-black mb-2 ${isAutomotive ? 'text-white' : 'text-text'}`}>
+          أطلب الآن والدفع عند الاستلام
+        </h3>
+        <p className={`text-sm ${isAutomotive ? 'text-zinc-400' : 'text-gray-500'}`}>
+          {requiresVehicleInfo
+            ? 'اختار سيارتك بالضبط — نتصلو بيك للتأكيد قبل الإرسال'
+            : 'يرجى إدخال معلوماتك وسنتصل بك للتأكيد'}
+        </p>
       </div>
 
       <div className="space-y-4">
@@ -364,16 +392,29 @@ export default function CheckoutForm({
         </div>
 
         {requiresVehicleInfo && (
-          <div className="rounded-xl border-2 border-primary/20 bg-gradient-to-b from-blue-50 to-white p-4 space-y-3">
-            <div>
-              <p className="text-sm font-black text-primary">🚗 سيارتك *</p>
-              <p className="text-xs text-gray-500 mt-1">
-                اختار الماركة ثم الموديل بالضبط — باش نوصلك الموكات المناسبة
-              </p>
-            </div>
-            <div className="grid grid-cols-1 gap-3">
+          <div
+            className={`rounded-xl border-2 p-4 space-y-4 ${
+              isAutomotive
+                ? 'border-amber-400/40 bg-gradient-to-b from-zinc-800 to-zinc-900'
+                : 'border-primary/20 bg-gradient-to-b from-blue-50 to-white'
+            }`}
+          >
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">🚗</span>
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">1. ماركة السيارة</label>
+                <p className={`text-sm font-black ${isAutomotive ? 'text-amber-400' : 'text-primary'}`}>
+                  معلومات سيارتك *
+                </p>
+                <p className={`text-xs mt-1 ${isAutomotive ? 'text-zinc-400' : 'text-gray-500'}`}>
+                  اختار الماركة ثم الموديل بالضبط — باش نوجهّزلك الموكات المناسبة
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className={`block text-xs font-bold mb-1.5 ${isAutomotive ? 'text-zinc-300' : 'text-gray-700'}`}>
+                  ① ماركة السيارة
+                </label>
                 <select
                   value={carBrandId}
                   onChange={(e) => {
@@ -381,7 +422,11 @@ export default function CheckoutForm({
                     setCarModelId('');
                     setVehicleError('');
                   }}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary outline-none bg-white font-medium"
+                  className={`w-full px-4 py-3 rounded-xl border focus:ring-2 outline-none font-medium ${
+                    isAutomotive
+                      ? 'bg-zinc-950 border-zinc-600 text-white focus:ring-amber-400'
+                      : 'bg-white border-gray-300 focus:ring-primary'
+                  }`}
                 >
                   <option value="">— اختر الماركة —</option>
                   {CAR_CATALOG.map((brand) => (
@@ -390,7 +435,9 @@ export default function CheckoutForm({
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">2. الموديل</label>
+                <label className={`block text-xs font-bold mb-1.5 ${isAutomotive ? 'text-zinc-300' : 'text-gray-700'}`}>
+                  ② الموديل
+                </label>
                 <select
                   value={carModelId}
                   disabled={!carBrandId}
@@ -398,7 +445,11 @@ export default function CheckoutForm({
                     setCarModelId(e.target.value);
                     setVehicleError('');
                   }}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary outline-none bg-white font-medium disabled:bg-gray-100 disabled:text-gray-400"
+                  className={`w-full px-4 py-3 rounded-xl border focus:ring-2 outline-none font-medium disabled:opacity-50 ${
+                    isAutomotive
+                      ? 'bg-zinc-950 border-zinc-600 text-white focus:ring-amber-400 disabled:bg-zinc-900'
+                      : 'bg-white border-gray-300 focus:ring-primary disabled:bg-gray-100 disabled:text-gray-400'
+                  }`}
                 >
                   <option value="">
                     {carBrandId ? '— اختر الموديل —' : 'اختر الماركة أولاً'}
@@ -410,11 +461,17 @@ export default function CheckoutForm({
               </div>
             </div>
             {carBrandId && carModelId && (
-              <p className="text-xs font-bold text-green-700 bg-green-50 border border-green-100 rounded-lg px-3 py-2">
-                ✓ {formatVehicleSelection(carBrandId, carModelId)}
+              <p
+                className={`text-xs font-bold rounded-lg px-3 py-2.5 ${
+                  isAutomotive
+                    ? 'text-emerald-300 bg-emerald-950/50 border border-emerald-800'
+                    : 'text-green-700 bg-green-50 border border-green-100'
+                }`}
+              >
+                ✓ تم الاختيار: {formatVehicleSelection(carBrandId, carModelId)}
               </p>
             )}
-            {vehicleError && <p className="text-red-500 text-xs font-bold">{vehicleError}</p>}
+            {vehicleError && <p className="text-red-400 text-xs font-bold">{vehicleError}</p>}
           </div>
         )}
 
