@@ -392,41 +392,32 @@ export default function CheckoutForm({
         </div>
 
         {requiresVehicleInfo && (
-          <div
-            className={`rounded-xl border-2 p-4 space-y-4 ${
-              isAutomotive
-                ? 'border-amber-400/40 bg-gradient-to-b from-zinc-800 to-zinc-900'
-                : 'border-primary/20 bg-gradient-to-b from-blue-50 to-white'
-            }`}
-          >
+          <div className="rounded-xl border-2 border-primary/30 bg-gradient-to-b from-blue-50 to-white p-4 space-y-4 relative z-10">
             <div className="flex items-start gap-3">
               <span className="text-2xl">🚗</span>
               <div>
-                <p className={`text-sm font-black ${isAutomotive ? 'text-amber-400' : 'text-primary'}`}>
-                  معلومات سيارتك *
-                </p>
-                <p className={`text-xs mt-1 ${isAutomotive ? 'text-zinc-400' : 'text-gray-500'}`}>
+                <p className="text-sm font-black text-primary">معلومات سيارتك *</p>
+                <p className="text-xs mt-1 text-gray-500">
                   اختار الماركة ثم الموديل بالضبط — باش نوجهّزلك الموكات المناسبة
                 </p>
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3">
               <div>
-                <label className={`block text-xs font-bold mb-1.5 ${isAutomotive ? 'text-zinc-300' : 'text-gray-700'}`}>
-                  ① ماركة السيارة
+                <label htmlFor="car_brand" className="block text-sm font-bold text-gray-700 mb-1">
+                  ماركة السيارة *
                 </label>
                 <select
+                  id="car_brand"
+                  name="car_brand"
+                  required
                   value={carBrandId}
                   onChange={(e) => {
                     setCarBrandId(e.target.value);
                     setCarModelId('');
                     setVehicleError('');
                   }}
-                  className={`w-full px-4 py-3 rounded-xl border focus:ring-2 outline-none font-medium ${
-                    isAutomotive
-                      ? 'bg-zinc-950 border-zinc-600 text-white focus:ring-amber-400'
-                      : 'bg-white border-gray-300 focus:ring-primary'
-                  }`}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary outline-none bg-white font-medium text-gray-900"
                 >
                   <option value="">— اختر الماركة —</option>
                   {CAR_CATALOG.map((brand) => (
@@ -435,21 +426,20 @@ export default function CheckoutForm({
                 </select>
               </div>
               <div>
-                <label className={`block text-xs font-bold mb-1.5 ${isAutomotive ? 'text-zinc-300' : 'text-gray-700'}`}>
-                  ② الموديل
+                <label htmlFor="car_model" className="block text-sm font-bold text-gray-700 mb-1">
+                  موديل السيارة *
                 </label>
                 <select
+                  id="car_model"
+                  name="car_model"
+                  required
                   value={carModelId}
                   disabled={!carBrandId}
                   onChange={(e) => {
                     setCarModelId(e.target.value);
                     setVehicleError('');
                   }}
-                  className={`w-full px-4 py-3 rounded-xl border focus:ring-2 outline-none font-medium disabled:opacity-50 ${
-                    isAutomotive
-                      ? 'bg-zinc-950 border-zinc-600 text-white focus:ring-amber-400 disabled:bg-zinc-900'
-                      : 'bg-white border-gray-300 focus:ring-primary disabled:bg-gray-100 disabled:text-gray-400'
-                  }`}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary outline-none bg-white font-medium text-gray-900 disabled:bg-gray-100 disabled:text-gray-400"
                 >
                   <option value="">
                     {carBrandId ? '— اختر الموديل —' : 'اختر الماركة أولاً'}
@@ -461,17 +451,11 @@ export default function CheckoutForm({
               </div>
             </div>
             {carBrandId && carModelId && (
-              <p
-                className={`text-xs font-bold rounded-lg px-3 py-2.5 ${
-                  isAutomotive
-                    ? 'text-emerald-300 bg-emerald-950/50 border border-emerald-800'
-                    : 'text-green-700 bg-green-50 border border-green-100'
-                }`}
-              >
+              <p className="text-xs font-bold text-green-700 bg-green-50 border border-green-100 rounded-lg px-3 py-2.5">
                 ✓ تم الاختيار: {formatVehicleSelection(carBrandId, carModelId)}
               </p>
             )}
-            {vehicleError && <p className="text-red-400 text-xs font-bold">{vehicleError}</p>}
+            {vehicleError && <p className="text-red-500 text-xs font-bold">{vehicleError}</p>}
           </div>
         )}
 
@@ -493,9 +477,9 @@ export default function CheckoutForm({
           {phoneError && <p className="text-red-500 text-xs mt-1 font-bold">{phoneError}</p>}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 relative z-10">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">الولاية *</label>
+            <label htmlFor="wilaya" className="block text-sm font-bold text-gray-700 mb-1">الولاية *</label>
             <select
               id="wilaya"
               name="wilaya"
@@ -506,15 +490,17 @@ export default function CheckoutForm({
                 setWilayaError('');
                 setCommune('');
               }}
-              className={`w-full px-4 py-3 rounded-xl border ${wilayaError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all bg-white`}
+              className={`w-full px-4 py-3 rounded-xl border text-gray-900 ${wilayaError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all bg-white appearance-auto`}
             >
-              <option value="">اختر الولاية...</option>
-              {WILAYAS.map(w => <option key={w} value={w}>{w}</option>)}
+              <option value="">— اختر الولاية —</option>
+              {WILAYAS.map((w) => (
+                <option key={w} value={w}>{w}</option>
+              ))}
             </select>
             {wilayaError && <p className="text-red-500 text-xs mt-1 font-bold">{wilayaError}</p>}
           </div>
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">البلدية *</label>
+            <label htmlFor="commune" className="block text-sm font-bold text-gray-700 mb-1">البلدية *</label>
             <select
               id="commune"
               name="commune"
@@ -525,16 +511,21 @@ export default function CheckoutForm({
                 setCommune(e.target.value);
                 setCommuneError('');
               }}
-              className={`w-full px-4 py-3 rounded-xl border ${communeError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all bg-white disabled:bg-gray-100 disabled:text-gray-400`}
+              className={`w-full px-4 py-3 rounded-xl border text-gray-900 ${communeError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all bg-white disabled:bg-gray-100 disabled:text-gray-400 appearance-auto`}
             >
               <option value="">
-                {wilaya ? 'اختر البلدية...' : 'اختر الولاية أولاً'}
+                {wilaya ? '— اختر البلدية —' : '— اختر الولاية أولاً —'}
               </option>
               {communes.map((c) => (
                 <option key={c} value={c}>{c}</option>
               ))}
             </select>
             {communeError && <p className="text-red-500 text-xs mt-1 font-bold">{communeError}</p>}
+            {wilaya && communes.length === 0 && (
+              <p className="text-amber-700 text-xs mt-1 font-bold bg-amber-50 border border-amber-100 rounded-lg p-2">
+                ما لقيناش قائمة البلديات — اكتب اسم البلدية في خانة الملاحظات أو اتصل بينا.
+              </p>
+            )}
           </div>
         </div>
 

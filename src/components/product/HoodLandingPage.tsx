@@ -1,6 +1,6 @@
 import { products, DEFAULT_REVIEWS } from '@/data/products';
 import { getProductWithLivePrice } from '@/lib/product-prices';
-import HoodInsulationLanding from '@/components/product/HoodInsulationLanding';
+import ProductPageContent from '@/components/product/ProductPageContent';
 import ProductViewPixel from '@/components/tracking/ProductViewPixel';
 import ExitIntentOffer from '@/components/product/ExitIntentOffer';
 import JsonLd from '@/components/seo/JsonLd';
@@ -21,7 +21,7 @@ export default async function HoodLandingPage() {
         price={product.price}
       />
       <JsonLd data={productJsonLd(product)} />
-      <HoodInsulationLanding product={product} reviews={reviews} />
+      <ProductPageContent product={product} reviews={reviews} hideBreadcrumb />
       <ExitIntentOffer
         productId={product.id}
         productName={product.name}
