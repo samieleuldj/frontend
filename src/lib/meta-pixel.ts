@@ -3,7 +3,7 @@ const HOOD_PIXEL_ID =
   process.env.NEXT_PUBLIC_META_PIXEL_HOOD ||
   process.env.NEXT_PUBLIC_META_PIXEL_ID ||
   process.env.META_PIXEL_ID ||
-  '1061415349433201';
+  '1108478241547299';
 
 const PIXEL_BY_PRODUCT: Record<string, string | undefined> = {
   'hood-insulation-mat': HOOD_PIXEL_ID,
