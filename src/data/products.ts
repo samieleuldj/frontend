@@ -381,7 +381,7 @@ export const products: Product[] = [
   },
   {
     id: 'hood-insulation-mat',
-    name: 'موكا عازل تحت غطاء السيارة (Capot)',
+    name: 'موكات عازلة تحت غطاء السيارة (Capot)',
     description:
       'عزل و حماية مثالية لمحرك سيارتك — يقلّل الحرارة في الصيف، يحمي من الصقيع في الشتاء، يخفّض ضجيج المحرك ويحمي الغطاء من الصدأ. طبقات عزل عالية الجودة، شكل أنيق تحت الكابو.',
     price: 3900,
@@ -391,6 +391,8 @@ export const products: Product[] = [
     reviewCount: 67,
     requiresVehicleInfo: true,
     images: ['/products/hood-insulation-mat/hero.png'],
+    beforeImage: '/products/hood-insulation-mat/hero.png',
+    afterImage: '/products/hood-insulation-mat/hero.png',
     problemText:
       'في الصيف الحرارة تدخل للمقصورة، المحرك يتعب، وفي الشتاء السيارة ما تنوضش بسرعة. غطاء السيارة بدون حماية يتعرض للصدأ والتآكل مع الوقت.',
     solutionText:

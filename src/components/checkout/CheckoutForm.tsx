@@ -368,7 +368,7 @@ export default function CheckoutForm({
             <div>
               <p className="text-sm font-black text-primary">🚗 سيارتك *</p>
               <p className="text-xs text-gray-500 mt-1">
-                اختار الماركة ثم الموديل بالضبط — باش نوصلك الموكا المناسب
+                اختار الماركة ثم الموديل بالضبط — باش نوصلك الموكات المناسبة
               </p>
             </div>
             <div className="grid grid-cols-1 gap-3">
