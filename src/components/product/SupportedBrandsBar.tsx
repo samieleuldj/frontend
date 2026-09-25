@@ -1,5 +1,5 @@
-import Image from 'next/image';
 import { CAR_CATALOG } from '@/data/car-brands';
+import { getBrandLogoUrl } from '@/lib/brand-logos';
 
 export default function SupportedBrandsBar() {
   return (
@@ -13,13 +13,13 @@ export default function SupportedBrandsBar() {
             className="flex flex-col items-center gap-1 min-w-[64px]"
             title={brand.label}
           >
-            <div className="relative w-12 h-12 rounded-xl border border-gray-100 bg-gray-50 overflow-hidden shadow-sm">
-              <Image
-                src={brand.logoUrl}
+            <div className="w-14 h-14 rounded-xl border border-gray-100 bg-white shadow-sm flex items-center justify-center p-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={getBrandLogoUrl(brand.id, brand.logoUrl)}
                 alt={brand.label}
-                fill
-                className="object-contain p-1.5"
-                sizes="48px"
+                className="max-w-full max-h-full object-contain"
+                loading="lazy"
               />
             </div>
             <span className="text-[10px] font-bold text-gray-600 text-center leading-tight">
