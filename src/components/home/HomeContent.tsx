@@ -111,12 +111,12 @@ export default function HomeContent() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-xl overflow-hidden border border-zinc-700">
-                  <Image src="/products/hood-insulation-mat/real-product.png" alt="صورة حقيقية — المنتج" width={400} height={300} className="w-full h-auto" />
-                  <p className="text-center text-xs text-amber-400 font-bold py-2 bg-zinc-950">المنتج الحقيقي</p>
+                  <Image src="/products/hood-insulation-mat/before.png" alt="قبل — بدون موكات" width={400} height={300} className="w-full h-auto" />
+                  <p className="text-center text-xs text-red-400 font-bold py-2 bg-zinc-950">قبل</p>
                 </div>
                 <div className="rounded-xl overflow-hidden border border-zinc-700">
-                  <Image src="/products/hood-insulation-mat/real-installed-close.png" alt="صورة حقيقية — بعد التركيب" width={400} height={300} className="w-full h-auto" />
-                  <p className="text-center text-xs text-emerald-400 font-bold py-2 bg-zinc-950">بعد التركيب</p>
+                  <Image src="/products/hood-insulation-mat/after.png" alt="بعد — مع الموكات" width={400} height={300} className="w-full h-auto" />
+                  <p className="text-center text-xs text-emerald-400 font-bold py-2 bg-zinc-950">بعد</p>
                 </div>
               </div>
             </div>

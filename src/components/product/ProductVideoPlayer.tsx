@@ -7,12 +7,14 @@ interface ProductVideoPlayerProps {
   videoFile: string;
   videoPoster?: string;
   title?: string;
+  playLabel?: string;
 }
 
 export default function ProductVideoPlayer({
   videoFile,
   videoPoster,
   title = 'فيديو توضيحي',
+  playLabel,
 }: ProductVideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -69,7 +71,7 @@ export default function ProductVideoPlayer({
             <span className="text-3xl text-primary ml-1">▶</span>
           </div>
           <span className="text-white font-bold text-sm bg-black/50 px-4 py-2 rounded-full">
-            شاهدي طريقة الاستعمال
+            {playLabel || `شوف ${title}`}
           </span>
         </button>
       )}

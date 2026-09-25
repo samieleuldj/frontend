@@ -41,12 +41,7 @@ export default function ProductPageContent({ product, reviews, hideBreadcrumb = 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           <div className="lg:col-span-7 space-y-6 order-1">
             {product.images && product.images.length > 0 ? (
-              <div className="space-y-2">
-                <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 text-xs font-bold px-3 py-1.5 rounded-full border border-emerald-100">
-                  📷 صور حقيقية — مش stock
-                </span>
-                <ProductGallery images={product.images} productName={product.name} />
-              </div>
+              <ProductGallery images={product.images} productName={product.name} />
             ) : (
               <div className="w-full aspect-square bg-white rounded-2xl border border-gray-200 flex items-center justify-center shadow-sm">
                 <span className="text-gray-400 font-medium">صورة المنتج الرئيسية</span>
@@ -121,7 +116,7 @@ export default function ProductPageContent({ product, reviews, hideBreadcrumb = 
                     <div className="w-full rounded-xl overflow-hidden border border-red-100 shadow-sm bg-gray-50">
                       <Image
                         src={product.beforeImage}
-                        alt="موكات عازلة حقيقية — المنتج اللي توصلك"
+                        alt="مشاكل الكابو — حرارة وضجيج وعازل متلف"
                         width={800}
                         height={1000}
                         className="w-full h-auto"
@@ -142,7 +137,7 @@ export default function ProductPageContent({ product, reviews, hideBreadcrumb = 
                     <div className="w-full rounded-xl overflow-hidden border border-green-100 shadow-sm bg-gray-50 order-2 md:order-1">
                       <Image
                         src={product.afterImage}
-                        alt="صورة حقيقية — موكات مركّبة تحت الكابو"
+                        alt="تركيب الموكات العازلة تحت الكابو"
                         width={800}
                         height={1000}
                         className="w-full h-auto"
@@ -172,6 +167,7 @@ export default function ProductPageContent({ product, reviews, hideBreadcrumb = 
             {product.usageSteps && product.usageSteps.length > 0 && (
               <UsageSection
                 steps={product.usageSteps}
+                title={product.usageTitle}
                 videoFile={product.videoFile}
                 videoPoster={product.videoPoster}
               />

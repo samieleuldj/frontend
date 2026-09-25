@@ -21,6 +21,7 @@ export type Product = {
   problemText?: string;
   solutionText?: string;
   usageSteps?: string[];
+  usageTitle?: string;
   videoFile?: string;
   videoPoster?: string;
   rating?: number;
@@ -391,13 +392,17 @@ export const products: Product[] = [
     reviewCount: 67,
     requiresVehicleInfo: true,
     images: [
+      '/products/hood-insulation-mat/hero.png',
       '/products/hood-insulation-mat/real-product.png',
       '/products/hood-insulation-mat/real-installed-close.png',
       '/products/hood-insulation-mat/real-installed-engine.png',
       '/products/hood-insulation-mat/real-installed-van.png',
     ],
-    beforeImage: '/products/hood-insulation-mat/real-product.png',
-    afterImage: '/products/hood-insulation-mat/real-installed-close.png',
+    beforeImage: '/products/hood-insulation-mat/before.png',
+    afterImage: '/products/hood-insulation-mat/solution.png',
+    videoFile: '/products/hood-insulation-mat/install.mp4',
+    videoPoster: '/products/hood-insulation-mat/real-product.png',
+    usageTitle: 'طريقة التركيب',
     problemText:
       'في الصيف الحرارة تدخل للمقصورة، المحرك يتعب، وفي الشتاء السيارة ما تنوضش بسرعة. غطاء السيارة بدون حماية يتعرض للصدأ والتآكل مع الوقت.',
     solutionText:
@@ -422,21 +427,18 @@ export const products: Product[] = [
         city: 'الجزائر',
         initial: 'ك',
         text: 'تركبتها على Clio، فرق واضح في الحرارة داخل السيارة. جودة الموكات مليحة.',
-        reviewImage: '/products/hood-insulation-mat/real-installed-engine.png',
       },
       {
         name: 'Sofiane M.',
         city: 'وهران',
         initial: 'س',
         text: 'شريتو لـ Dacia Logan، وصلني مقاس مناسب. التركيب ساهل.',
-        reviewImage: '/products/hood-insulation-mat/real-installed-van.png',
       },
       {
         name: 'Amine K.',
         city: 'قسنطينة',
         initial: 'أ',
         text: 'يخفّض الضجيج شوية ويحمي الكابو. COD يطمّن.',
-        reviewImage: '/products/hood-insulation-mat/real-installed-close.png',
       },
     ],
   },

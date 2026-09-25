@@ -9,7 +9,7 @@ export const metadata: Metadata = buildPageMetadata({
   description:
     'موكات عزل تحت غطاء السيارة — تقلّل الحرارة والضجيج وتحمي الكابو. مقاس حسب ماركة وموديل سيارتك. الدفع عند الاستلام — توصيل 58 ولاية.',
   path: '/',
-  image: '/products/hood-insulation-mat/real-product.png',
+  image: '/products/hood-insulation-mat/hero.png',
   keywords: ['موكات', 'عزل الكابو', 'أكسسوارات السيارات', 'AUTO PLUS DZ', 'دفع عند الاستلام'],
 });
 

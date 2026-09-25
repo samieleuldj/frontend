@@ -17,7 +17,7 @@ export const siteConfig = {
     'AUTO PLUS DZ',
     'أوتو بلاس ديزاد',
   ],
-  defaultOgImage: '/products/hood-insulation-mat/real-installed-close.png',
+  defaultOgImage: '/products/hood-insulation-mat/solution.png',
 };
 
 export function getSiteUrl(): string {
