@@ -105,73 +105,68 @@ export default function HoodInsulationLanding({ product, reviews }: Props) {
         </div>
       </section>
 
-      {/* المشكلة — صورة المستخدم */}
-      <section className="py-10 md:py-14 bg-zinc-900/60 border-b border-zinc-800">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <span className="inline-block bg-red-500/20 text-red-400 font-black px-4 py-1 rounded-md text-sm mb-3">
-              ⚠️ المشكلة
-            </span>
-            <h2 className="text-2xl md:text-3xl font-black">
-              الكابو تاع سيارتك يتعرض للحرارة والضجيج كل يوم
-            </h2>
-            <p className="text-zinc-400 mt-3 max-w-2xl mx-auto leading-relaxed">
+      {/* المشكلة — صورتك */}
+      <section className="py-10 md:py-14 bg-white text-zinc-900">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-xl">⚠️</div>
+            <h2 className="text-2xl md:text-3xl font-black">تعاني من هذه المشكلة يومياً؟</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <div className="rounded-2xl overflow-hidden border border-red-100 shadow-lg order-1">
+              <Image
+                src={PROBLEM_IMAGE}
+                alt="مشاكل الكابو — حرارة زائدة، ضجيج الموتور، وعازل متلف"
+                width={900}
+                height={700}
+                className="w-full h-auto"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+            <p className="text-gray-600 text-lg leading-relaxed border-r-4 border-red-200 pr-4 order-2">
               {product.problemText}
             </p>
           </div>
 
-          <div className="rounded-2xl overflow-hidden border-2 border-red-900/40 shadow-2xl max-w-5xl mx-auto">
-            <Image
-              src={PROBLEM_IMAGE}
-              alt="مشاكل الكابو — حرارة زائدة، ضجيج الموتور، وعازل متلف"
-              width={1200}
-              height={900}
-              className="w-full h-auto"
-              sizes="(max-width: 768px) 100vw, 900px"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-10">
             {PROBLEMS.map((item) => (
               <div
                 key={item.title}
-                className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 relative"
+                className="bg-gray-50 border border-gray-100 rounded-xl p-4 relative"
               >
                 <span className="absolute top-2 left-2 text-red-500 font-black">✕</span>
                 <div className="text-2xl mb-2">{item.icon}</div>
-                <h3 className="font-bold text-sm text-white mb-1">{item.title}</h3>
-                <p className="text-zinc-500 text-xs leading-relaxed">{item.desc}</p>
+                <h3 className="font-bold text-sm text-zinc-900 mb-1">{item.title}</h3>
+                <p className="text-gray-500 text-xs leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* الحل — صورة التركيب */}
-      <section className="py-10 md:py-14">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <span className="inline-block bg-emerald-500/20 text-emerald-400 font-black px-4 py-1 rounded-md text-sm mb-3">
-              ✅ الحل
-            </span>
-            <h2 className="text-2xl md:text-3xl font-black">
-              والحل ماشي تبدل الكابو...
-              <span className="text-amber-400"> الحل يبدأ من الموكات.</span>
-            </h2>
-            <p className="text-zinc-400 mt-3 max-w-2xl mx-auto leading-relaxed">
-              {product.solutionText}
-            </p>
+      {/* الحل — صورتك */}
+      <section className="py-10 md:py-14 bg-gray-50 text-zinc-900 border-y border-gray-200">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-xl">💡</div>
+            <h2 className="text-2xl md:text-3xl font-black">الحل اللي يريحك:</h2>
           </div>
 
-          <div className="rounded-2xl overflow-hidden border-2 border-emerald-900/40 shadow-2xl max-w-5xl mx-auto">
-            <Image
-              src={SOLUTION_IMAGE}
-              alt="تركيب الموكات العازلة تحت الكابو — AUTO PLUS DZ"
-              width={1200}
-              height={900}
-              className="w-full h-auto"
-              sizes="(max-width: 768px) 100vw, 900px"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <p className="text-gray-700 text-lg leading-relaxed font-medium border-r-4 border-green-200 pr-4 order-2 md:order-1">
+              {product.solutionText}
+            </p>
+            <div className="rounded-2xl overflow-hidden border border-green-100 shadow-lg order-1 md:order-2">
+              <Image
+                src={SOLUTION_IMAGE}
+                alt="تركيب الموكات العازلة تحت الكابو — AUTO PLUS DZ"
+                width={900}
+                height={700}
+                className="w-full h-auto"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
           </div>
 
           <div className="text-center mt-8">
