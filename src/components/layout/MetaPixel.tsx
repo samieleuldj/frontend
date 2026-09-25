@@ -3,6 +3,7 @@
 import Script from 'next/script';
 import { usePathname } from 'next/navigation';
 import { getMetaPixelIdForPath, getMetaPixelIdForProduct } from '@/lib/meta-pixel';
+import { PURCHASE_STORAGE_KEY } from '@/lib/pixels';
 
 export default function MetaPixel() {
   const pathname = usePathname();
@@ -10,7 +11,7 @@ export default function MetaPixel() {
   // Try to get pixel ID from pending purchase first (for thank-you page)
   let pixelId = '';
   if (typeof window !== 'undefined') {
-    const pendingRaw = window.sessionStorage.getItem('cdz_pending_purchase');
+    const pendingRaw = window.sessionStorage.getItem(PURCHASE_STORAGE_KEY);
     if (pendingRaw) {
       try {
         const pending = JSON.parse(pendingRaw);
