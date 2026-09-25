@@ -17,8 +17,8 @@ import {
   getStoredDiscount,
 } from '@/lib/product-discount';
 import { LIVE_PRICE_EVENT } from '@/components/product/LiveStorefrontPrices';
+import CarBrandPicker from '@/components/checkout/CarBrandPicker';
 import {
-  CAR_CATALOG,
   formatVehicleSelection,
   getModelsForBrand,
 } from '@/data/car-brands';
@@ -404,26 +404,18 @@ export default function CheckoutForm({
             </div>
             <div className="grid grid-cols-1 gap-3">
               <div>
-                <label htmlFor="car_brand" className="block text-sm font-bold text-gray-700 mb-1">
+                <label className="block text-sm font-bold text-gray-700 mb-2">
                   ماركة السيارة *
                 </label>
-                <select
-                  id="car_brand"
-                  name="car_brand"
-                  required
+                <CarBrandPicker
                   value={carBrandId}
-                  onChange={(e) => {
-                    setCarBrandId(e.target.value);
+                  onChange={(brandId) => {
+                    setCarBrandId(brandId);
                     setCarModelId('');
                     setVehicleError('');
                   }}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary outline-none bg-white font-medium text-gray-900"
-                >
-                  <option value="">— اختر الماركة —</option>
-                  {CAR_CATALOG.map((brand) => (
-                    <option key={brand.id} value={brand.id}>{brand.label}</option>
-                  ))}
-                </select>
+                />
+                <input type="hidden" name="car_brand" value={carBrandId} required={requiresVehicleInfo} />
               </div>
               <div>
                 <label htmlFor="car_model" className="block text-sm font-bold text-gray-700 mb-1">

@@ -6,6 +6,7 @@ import ProductReviews from '@/components/product/ProductReviews';
 import ConversionTrustBar from '@/components/product/ConversionTrustBar';
 import ProductPriceDisplay from '@/components/product/ProductPriceDisplay';
 import StickyOrderBar from '@/components/product/StickyOrderBar';
+import SupportedBrandsBar from '@/components/product/SupportedBrandsBar';
 import type { Product, ProductReview } from '@/data/products';
 import { storeBrand } from '@/lib/store-brand';
 
@@ -102,6 +103,8 @@ export default function ProductPageContent({ product, reviews, hideBreadcrumb = 
           </div>
 
           <div className="lg:col-span-7 space-y-8 order-3">
+            {product.requiresVehicleInfo && <SupportedBrandsBar />}
+
             <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 mt-8">
               <div className="mb-10">
                 <div className="flex items-center gap-3 mb-4">

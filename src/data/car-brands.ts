@@ -6,6 +6,7 @@ export type CarModelOption = {
 export type CarBrandOption = {
   id: string;
   label: string;
+  logoUrl: string;
   models: CarModelOption[];
 };
 
@@ -14,6 +15,7 @@ export const CAR_CATALOG: CarBrandOption[] = [
   {
     id: 'volkswagen',
     label: 'Volkswagen',
+    logoUrl: '/brands/volkswagen.svg',
     models: [
       { id: 'vw-golf-4', label: 'Golf 4' },
       { id: 'vw-golf-5', label: 'Golf 5' },
@@ -25,6 +27,7 @@ export const CAR_CATALOG: CarBrandOption[] = [
   {
     id: 'renault',
     label: 'Renault',
+    logoUrl: '/brands/renault.svg',
     models: [
       { id: 'rn-symbol-09', label: 'Symbol (2009–2012)' },
       { id: 'rn-symbol-13', label: 'Symbol (2013–2020)' },
@@ -40,6 +43,7 @@ export const CAR_CATALOG: CarBrandOption[] = [
   {
     id: 'peugeot',
     label: 'Peugeot',
+    logoUrl: '/brands/peugeot.svg',
     models: [
       { id: 'pg-207', label: '207 (2006–2013)' },
       { id: 'pg-208', label: '208 (2012–2020)' },
@@ -60,11 +64,13 @@ export const CAR_CATALOG: CarBrandOption[] = [
   {
     id: 'chery',
     label: 'Chery',
+    logoUrl: '/brands/chery.svg',
     models: [{ id: 'ch-qq', label: 'QQ (2007–2016)' }],
   },
   {
     id: 'toyota',
     label: 'Toyota',
+    logoUrl: '/brands/toyota.svg',
     models: [
       { id: 'ty-corolla', label: 'Corolla (2003–2007)' },
       { id: 'ty-yaris', label: 'Yaris copé (2012–2016)' },
@@ -73,11 +79,13 @@ export const CAR_CATALOG: CarBrandOption[] = [
   {
     id: 'hyundai',
     label: 'Hyundai',
+    logoUrl: '/brands/hyundai.svg',
     models: [{ id: 'hy-accent', label: 'Accent (2002–2016)' }],
   },
   {
     id: 'citroen',
     label: 'Citroën',
+    logoUrl: '/brands/citroen.svg',
     models: [
       { id: 'ct-saxo', label: 'Saxo (1998–2002)' },
       { id: 'ct-xsara', label: 'Xsara (1995–2002)' },
@@ -87,6 +95,7 @@ export const CAR_CATALOG: CarBrandOption[] = [
   {
     id: 'dacia',
     label: 'Dacia',
+    logoUrl: '/brands/dacia.svg',
     models: [
       { id: 'dc-logan-nv', label: 'Logan nouvelle' },
       { id: 'dc-sandero', label: 'Sandero Stepway (2015–2020)' },
@@ -95,6 +104,7 @@ export const CAR_CATALOG: CarBrandOption[] = [
   {
     id: 'fiat',
     label: 'Fiat',
+    logoUrl: '/brands/fiat.svg',
     models: [{ id: 'ft-doblo', label: 'Doblo Panorama (2024–2027)' }],
   },
 ];
