@@ -1,6 +1,6 @@
 const SESSION_KEY = 'veloradz_sid';
 
-type EventType = 'page_view' | 'product_view' | 'checkout_start';
+type EventType = 'page_view' | 'product_view' | 'checkout_start' | 'whatsapp_lead';
 
 type TrackPayload = {
   page_path?: string;

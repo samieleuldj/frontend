@@ -205,7 +205,7 @@ export default function ProductPageContent({ product, reviews, hideBreadcrumb = 
         </div>
       </div>
 
-      <StickyOrderBar productId={product.id} price={product.price} />
+      <StickyOrderBar productId={product.id} productName={product.name} price={product.price} />
     </div>
   );
 }

@@ -42,6 +42,22 @@ export function trackViewContent(data: ProductPixelData): void {
   }
 }
 
+export function trackLead(data: ProductPixelData): void {
+  if (typeof window === 'undefined') return;
+
+  const payload = productPayload(data);
+
+  if (window.fbq) {
+    window.fbq('track', 'Lead', payload);
+  }
+  if (window.ttq) {
+    window.ttq.track('Contact', payload);
+  }
+  if (window.snaptr) {
+    window.snaptr('track', 'SIGN_UP', payload);
+  }
+}
+
 export function trackInitiateCheckout(data: ProductPixelData): void {
   if (typeof window === 'undefined') return;
 

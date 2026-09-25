@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   formatShippingLabel,
   getShippingCost,
@@ -10,7 +10,8 @@ import {
 } from '@/data/shipping-rates';
 import { getCommunesForWilaya } from '@/data/communes';
 import { getTrackingContext, trackEvent } from '@/lib/analytics';
-import { storePendingPurchase, trackInitiateCheckout } from '@/lib/pixels';
+import { storePendingPurchase, trackInitiateCheckout, trackLead } from '@/lib/pixels';
+import { STORE_WHATSAPP_URL } from '@/lib/store';
 import {
   DISCOUNT_EVENT,
   EXIT_DISCOUNT_DZD,
@@ -81,6 +82,7 @@ export default function CheckoutForm({
   const [carModelId, setCarModelId] = useState('');
   const [vehicleError, setVehicleError] = useState('');
   const carModels = getModelsForBrand(carBrandId);
+  const checkoutTracked = useRef(false);
 
   const shippingRate = useMemo(() => getShippingRate(wilaya), [wilaya]);
   const communes = useMemo(() => getCommunesForWilaya(wilaya), [wilaya]);
@@ -92,6 +94,45 @@ export default function CheckoutForm({
   const unitPrice = livePrice - exitDiscount;
   const baseTotal = unitPrice * quantity;
   const total = baseTotal + (deliveryCost ?? 0);
+
+  const trackCheckoutStart = useCallback(() => {
+    if (checkoutTracked.current) return;
+    checkoutTracked.current = true;
+    trackEvent('checkout_start', {
+      page_path: typeof window !== 'undefined' ? window.location.pathname : undefined,
+      product_name: productName,
+      product_id: productId,
+    });
+    trackInitiateCheckout({
+      productId,
+      productName,
+      price: unitPrice,
+      quantity,
+    });
+  }, [productId, productName, unitPrice, quantity]);
+
+  const whatsAppOrderUrl = useMemo(() => {
+    const vehicle = carBrandId && carModelId ? formatVehicleSelection(carBrandId, carModelId) : '';
+    const lines = [
+      'سلام، بغيت نطلب موكات عازلة للكابو (3900 دج — COD).',
+      vehicle ? `سيارتي: ${vehicle}` : 'ماركة/موديل سيارتي: ',
+      wilaya ? `الولاية: ${wilaya}` : '',
+      customerName.trim() ? `الاسم: ${customerName.trim()}` : '',
+      phone.trim() ? `الهاتف: ${phone.trim()}` : '',
+    ].filter(Boolean);
+    const text = encodeURIComponent(lines.join('\n'));
+    return `${STORE_WHATSAPP_URL}?text=${text}`;
+  }, [carBrandId, carModelId, wilaya, customerName, phone]);
+
+  const openWhatsAppOrder = () => {
+    trackLead({ productId, productName, price: unitPrice, quantity });
+    trackEvent('whatsapp_lead', {
+      product_id: productId,
+      product_name: productName,
+      page_path: typeof window !== 'undefined' ? window.location.pathname : undefined,
+    });
+    window.open(whatsAppOrderUrl, '_blank', 'noopener,noreferrer');
+  };
 
   useEffect(() => {
     setLivePrice(price);
@@ -126,20 +167,6 @@ export default function CheckoutForm({
       window.removeEventListener(LIVE_PRICE_EVENT, onLivePrice);
     };
   }, [productId]);
-
-  useEffect(() => {
-    trackEvent('checkout_start', {
-      page_path: typeof window !== 'undefined' ? window.location.pathname : undefined,
-      product_name: productName,
-      product_id: productId,
-    });
-    trackInitiateCheckout({
-      productId,
-      productName,
-      price: unitPrice,
-      quantity,
-    });
-  }, [productId, productName, unitPrice, quantity]);
 
   useEffect(() => {
     if (wilaya && deliveryType === 'office' && !isDeskDeliveryAvailable(wilaya)) {
@@ -354,6 +381,7 @@ export default function CheckoutForm({
   return (
     <form
       onSubmit={handleSubmit}
+      onFocus={trackCheckoutStart}
       className={`rounded-2xl shadow-lg p-6 md:p-8 ${
         isAutomotive
           ? 'bg-zinc-900 border border-zinc-700 text-white'
@@ -371,6 +399,16 @@ export default function CheckoutForm({
             : 'يرجى إدخال معلوماتك وسنتصل بك للتأكيد'}
         </p>
       </div>
+
+      <button
+        type="button"
+        onClick={openWhatsAppOrder}
+        className="w-full mb-4 flex items-center justify-center gap-2 rounded-xl border-2 border-green-500 bg-green-50 text-green-800 font-black py-3.5 px-4 hover:bg-green-100 transition-colors"
+      >
+        <span className="text-xl">💬</span>
+        اطلب عبر واتساب — أسرع للتأكيد
+      </button>
+      <p className="text-center text-xs text-gray-400 -mt-2 mb-4">أو عبّي الفورم تحت — الدفع عند الاستلام</p>
 
       <div className="space-y-4">
         <div>
