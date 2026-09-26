@@ -19,9 +19,10 @@ import {
 } from '@/lib/product-discount';
 import { LIVE_PRICE_EVENT } from '@/components/product/LiveStorefrontPrices';
 import CarBrandPicker from '@/components/checkout/CarBrandPicker';
+import PopularVehicleShortcuts from '@/components/checkout/PopularVehicleShortcuts';
 import {
-  formatVehicleSelection,
-  getModelsForBrand,
+  filterModelsForBrand,
+  formatVehicleOrderNote,
 } from '@/data/car-brands';
 import { getSiteDisplayUrl } from '@/lib/store-brand';
 
@@ -74,8 +75,16 @@ export default function CheckoutForm({
   const [deliveryError, setDeliveryError] = useState('');
   const [carBrandId, setCarBrandId] = useState(initialBrandId);
   const [carModelId, setCarModelId] = useState(initialModelId);
+  const [modelSearch, setModelSearch] = useState('');
+  const [useManualVehicle, setUseManualVehicle] = useState(false);
+  const [vehicleManual, setVehicleManual] = useState('');
   const [vehicleError, setVehicleError] = useState('');
-  const carModels = getModelsForBrand(carBrandId);
+  const [communeManual, setCommuneManual] = useState(false);
+  const [showDeliveryOptions, setShowDeliveryOptions] = useState(false);
+  const carModels = useMemo(
+    () => filterModelsForBrand(carBrandId, modelSearch),
+    [carBrandId, modelSearch],
+  );
   const checkoutTracked = useRef(false);
 
   const shippingRate = useMemo(() => getShippingRate(wilaya), [wilaya]);
@@ -105,8 +114,14 @@ export default function CheckoutForm({
     });
   }, [productId, productName, unitPrice, quantity]);
 
+  const vehicleLabel = useMemo(() => {
+    if (useManualVehicle && vehicleManual.trim()) return vehicleManual.trim();
+    if (carBrandId && carModelId) return formatVehicleOrderNote(carBrandId, carModelId);
+    return '';
+  }, [useManualVehicle, vehicleManual, carBrandId, carModelId]);
+
   const whatsAppOrderUrl = useMemo(() => {
-    const vehicle = carBrandId && carModelId ? formatVehicleSelection(carBrandId, carModelId) : '';
+    const vehicle = vehicleLabel;
     const lines = [
       'سلام، بغيت نطلب موكات عازلة للكابو (3900 دج — COD).',
       vehicle ? `سيارتي: ${vehicle}` : 'ماركة/موديل سيارتي: ',
@@ -116,7 +131,7 @@ export default function CheckoutForm({
     ].filter(Boolean);
     const text = encodeURIComponent(lines.join('\n'));
     return `${STORE_WHATSAPP_URL}?text=${text}`;
-  }, [carBrandId, carModelId, wilaya, customerName, phone]);
+  }, [vehicleLabel, wilaya, customerName, phone]);
 
   const openWhatsAppOrder = () => {
     trackLead({ productId, productName, price: unitPrice, quantity });
@@ -197,11 +212,15 @@ export default function CheckoutForm({
       setWilayaError('');
     }
 
-    if (!trimmedCommune) {
-      setCommuneError('يرجى اختيار البلدية');
+    if (!trimmedCommune || trimmedCommune.length < 2) {
+      setCommuneError('يرجى إدخال أو اختيار البلدية');
       hasError = true;
-    } else if (communes.length > 0 && !communes.includes(trimmedCommune)) {
-      setCommuneError('اختر بلدية من القائمة — الاسم يجب أن يطابق المتجر');
+    } else if (
+      communes.length > 0 &&
+      !communeManual &&
+      !communes.includes(trimmedCommune)
+    ) {
+      setCommuneError('اختر بلدية من القائمة أو فعّل «بلدية أخرى»');
       hasError = true;
     } else {
       setCommuneError('');
@@ -237,8 +256,15 @@ export default function CheckoutForm({
     }
 
     if (requiresVehicleInfo) {
-      if (!carBrandId || !carModelId) {
-        setVehicleError('يرجى اختيار ماركة السيارة ثم الموديل');
+      if (useManualVehicle) {
+        if (vehicleManual.trim().length < 3) {
+          setVehicleError('اكتب ماركة وموديل سيارتك (3 أحرف على الأقل)');
+          hasError = true;
+        } else {
+          setVehicleError('');
+        }
+      } else if (!carBrandId || !carModelId) {
+        setVehicleError('اختار سيارتك من القائمة أو اضغط «ما لقيتش سيارتي»');
         hasError = true;
       } else {
         setVehicleError('');
@@ -260,7 +286,7 @@ export default function CheckoutForm({
     setIsSubmitting(true);
 
     const vehicleNote = requiresVehicleInfo
-      ? `السيارة: ${formatVehicleSelection(carBrandId, carModelId)}`
+      ? `السيارة: ${vehicleLabel}`
       : '';
     const discountNote = [vehicleNote, exitDiscount > 0 ? `خصم ${exitDiscount} دج (عرض خروج)` : '']
       .filter(Boolean)
@@ -345,7 +371,6 @@ export default function CheckoutForm({
   return (
     <form
       onSubmit={handleSubmit}
-      onFocus={trackCheckoutStart}
       className={`rounded-2xl shadow-lg p-6 md:p-8 ${
         isAutomotive
           ? 'bg-zinc-900 border border-zinc-700 text-white'
@@ -359,12 +384,156 @@ export default function CheckoutForm({
         </h3>
         <p className={`text-sm ${isAutomotive ? 'text-zinc-400' : 'text-gray-500'}`}>
           {requiresVehicleInfo
-            ? 'اختار سيارتك بالضبط — نتصلو بيك للتأكيد قبل الإرسال'
+            ? '3 خطوات: هاتف → سيارة → عنوان — نتصلو بيك للتأكيد'
             : 'يرجى إدخال معلوماتك وسنتصل بك للتأكيد'}
         </p>
+        {wilaya && deliveryCost !== null && (
+          <p className="text-sm font-black text-primary mt-2">
+            المجموع التقريبي: {total} دج (منتج + توصيل)
+          </p>
+        )}
       </div>
 
       <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-bold text-gray-700 mb-1">رقم الهاتف *</label>
+          <input
+            type="tel"
+            id="phone"
+            required
+            dir="ltr"
+            value={phone}
+            onFocus={trackCheckoutStart}
+            onChange={(e) => {
+              setPhone(e.target.value);
+              setPhoneError('');
+            }}
+            placeholder="05XX XX XX XX"
+            className={`w-full px-4 py-3 rounded-xl border ${phoneError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all text-right`}
+          />
+          {phoneError && <p className="text-red-500 text-xs mt-1 font-bold">{phoneError}</p>}
+        </div>
+
+        {requiresVehicleInfo && (
+          <div className="rounded-xl border-2 border-primary/30 bg-gradient-to-b from-blue-50 to-white p-4 space-y-4 relative z-10">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">🚗</span>
+              <div>
+                <p className="text-sm font-black text-primary">سيارتك *</p>
+                <p className="text-xs mt-1 text-gray-500">
+                  اضغط اختصار أو اختار من القائمة — ما لقيتش؟ اكتبها تحت
+                </p>
+              </div>
+            </div>
+
+            {!useManualVehicle && (
+              <>
+                <PopularVehicleShortcuts
+                  brandId={carBrandId}
+                  modelId={carModelId}
+                  onSelect={(brandId, modelId) => {
+                    setCarBrandId(brandId);
+                    setCarModelId(modelId);
+                    setModelSearch('');
+                    setVehicleError('');
+                    setUseManualVehicle(false);
+                  }}
+                />
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    ماركة السيارة *
+                  </label>
+                  <CarBrandPicker
+                    value={carBrandId}
+                    onChange={(brandId) => {
+                      setCarBrandId(brandId);
+                      setCarModelId('');
+                      setModelSearch('');
+                      setVehicleError('');
+                    }}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="car_model_search" className="block text-sm font-bold text-gray-700 mb-1">
+                    موديل السيارة *
+                  </label>
+                  {carBrandId && (
+                    <input
+                      id="car_model_search"
+                      type="search"
+                      value={modelSearch}
+                      onChange={(e) => setModelSearch(e.target.value)}
+                      placeholder="ابحث: Symbol, Partner, 206..."
+                      className="w-full mb-2 px-3 py-2 rounded-lg border border-gray-200 text-sm"
+                    />
+                  )}
+                  <select
+                    id="car_model"
+                    name="car_model"
+                    value={carModelId}
+                    disabled={!carBrandId}
+                    onChange={(e) => {
+                      setCarModelId(e.target.value);
+                      setVehicleError('');
+                    }}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary outline-none bg-white font-medium text-gray-900 disabled:bg-gray-100 disabled:text-gray-400"
+                  >
+                    <option value="">
+                      {carBrandId ? '— اختر الموديل —' : 'اختر الماركة أولاً'}
+                    </option>
+                    {carModels.map((model) => (
+                      <option key={model.id} value={model.id}>{model.label}</option>
+                    ))}
+                  </select>
+                  {carBrandId && carModels.length === 0 && (
+                    <p className="text-amber-700 text-xs mt-2 font-bold">
+                      ما لقيناش في البحث — استعمل «ما لقيتش سيارتي» تحت
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
+
+            <button
+              type="button"
+              onClick={() => {
+                setUseManualVehicle((v) => !v);
+                setVehicleError('');
+              }}
+              className="text-sm font-bold text-primary underline"
+            >
+              {useManualVehicle ? '← رجّع للقائمة' : 'ما لقيتش سيارتي في القائمة — نكتبها'}
+            </button>
+
+            {useManualVehicle && (
+              <div>
+                <label htmlFor="vehicle_manual" className="block text-sm font-bold text-gray-700 mb-1">
+                  ماركة وموديل سيارتك *
+                </label>
+                <input
+                  id="vehicle_manual"
+                  type="text"
+                  value={vehicleManual}
+                  onChange={(e) => {
+                    setVehicleManual(e.target.value);
+                    setVehicleError('');
+                  }}
+                  placeholder="مثال: Clio 3 — 2010"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary outline-none"
+                />
+                <p className="text-xs text-gray-500 mt-1">نتصلو بيك باش نأكدو المقاس قبل الإرسال</p>
+              </div>
+            )}
+
+            {!useManualVehicle && carBrandId && carModelId && (
+              <p className="text-xs font-bold text-green-700 bg-green-50 border border-green-100 rounded-lg px-3 py-2.5">
+                ✓ {formatVehicleOrderNote(carBrandId, carModelId)}
+              </p>
+            )}
+            {vehicleError && <p className="text-red-500 text-xs font-bold">{vehicleError}</p>}
+          </div>
+        )}
+
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-1">الاسم واللقب *</label>
           <input
@@ -383,84 +552,6 @@ export default function CheckoutForm({
           {nameError && <p className="text-red-500 text-xs mt-1 font-bold">{nameError}</p>}
         </div>
 
-        {requiresVehicleInfo && (
-          <div className="rounded-xl border-2 border-primary/30 bg-gradient-to-b from-blue-50 to-white p-4 space-y-4 relative z-10">
-            <div className="flex items-start gap-3">
-              <span className="text-2xl">🚗</span>
-              <div>
-                <p className="text-sm font-black text-primary">معلومات سيارتك *</p>
-                <p className="text-xs mt-1 text-gray-500">
-                  اختار الماركة ثم الموديل بالضبط — باش نوجهّزلك الموكات المناسبة
-                </p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 gap-3">
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  ماركة السيارة *
-                </label>
-                <CarBrandPicker
-                  value={carBrandId}
-                  onChange={(brandId) => {
-                    setCarBrandId(brandId);
-                    setCarModelId('');
-                    setVehicleError('');
-                  }}
-                />
-                <input type="hidden" name="car_brand" value={carBrandId} required={requiresVehicleInfo} />
-              </div>
-              <div>
-                <label htmlFor="car_model" className="block text-sm font-bold text-gray-700 mb-1">
-                  موديل السيارة *
-                </label>
-                <select
-                  id="car_model"
-                  name="car_model"
-                  required
-                  value={carModelId}
-                  disabled={!carBrandId}
-                  onChange={(e) => {
-                    setCarModelId(e.target.value);
-                    setVehicleError('');
-                  }}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary outline-none bg-white font-medium text-gray-900 disabled:bg-gray-100 disabled:text-gray-400"
-                >
-                  <option value="">
-                    {carBrandId ? '— اختر الموديل —' : 'اختر الماركة أولاً'}
-                  </option>
-                  {carModels.map((model) => (
-                    <option key={model.id} value={model.id}>{model.label}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            {carBrandId && carModelId && (
-              <p className="text-xs font-bold text-green-700 bg-green-50 border border-green-100 rounded-lg px-3 py-2.5">
-                ✓ تم الاختيار: {formatVehicleSelection(carBrandId, carModelId)}
-              </p>
-            )}
-            {vehicleError && <p className="text-red-500 text-xs font-bold">{vehicleError}</p>}
-          </div>
-        )}
-
-        <div>
-          <label className="block text-sm font-bold text-gray-700 mb-1">رقم الهاتف *</label>
-          <input
-            type="tel"
-            id="phone"
-            required
-            dir="ltr"
-            value={phone}
-            onChange={(e) => {
-              setPhone(e.target.value);
-              setPhoneError('');
-            }}
-            placeholder="05XX XX XX XX"
-            className={`w-full px-4 py-3 rounded-xl border ${phoneError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all text-right`}
-          />
-          {phoneError && <p className="text-red-500 text-xs mt-1 font-bold">{phoneError}</p>}
-        </div>
-
         <div className="grid grid-cols-1 gap-4 relative z-10">
           <div>
             <label htmlFor="wilaya" className="block text-sm font-bold text-gray-700 mb-1">الولاية *</label>
@@ -473,6 +564,7 @@ export default function CheckoutForm({
                 setWilaya(e.target.value);
                 setWilayaError('');
                 setCommune('');
+                setCommuneManual(false);
               }}
               className={`w-full px-4 py-3 rounded-xl border text-gray-900 ${wilayaError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all bg-white appearance-auto`}
             >
@@ -485,92 +577,105 @@ export default function CheckoutForm({
           </div>
           <div>
             <label htmlFor="commune" className="block text-sm font-bold text-gray-700 mb-1">البلدية *</label>
-            <select
-              id="commune"
-              name="commune"
-              required
-              disabled={!wilaya}
-              value={commune}
-              onChange={(e) => {
-                setCommune(e.target.value);
-                setCommuneError('');
-              }}
-              className={`w-full px-4 py-3 rounded-xl border text-gray-900 ${communeError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all bg-white disabled:bg-gray-100 disabled:text-gray-400 appearance-auto`}
-            >
-              <option value="">
-                {wilaya ? '— اختر البلدية —' : '— اختر الولاية أولاً —'}
-              </option>
-              {communes.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-            {communeError && <p className="text-red-500 text-xs mt-1 font-bold">{communeError}</p>}
-            {wilaya && communes.length === 0 && (
-              <p className="text-amber-700 text-xs mt-1 font-bold bg-amber-50 border border-amber-100 rounded-lg p-2">
-                ما لقيناش قائمة البلديات — اكتب اسم البلدية في خانة الملاحظات أو اتصل بينا.
-              </p>
+            {wilaya && (communes.length === 0 || communeManual) ? (
+              <input
+                id="commune"
+                name="commune"
+                required
+                value={commune}
+                onChange={(e) => {
+                  setCommune(e.target.value);
+                  setCommuneError('');
+                }}
+                placeholder="اكتب اسم البلدية"
+                className={`w-full px-4 py-3 rounded-xl border text-gray-900 ${communeError ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-primary outline-none`}
+              />
+            ) : (
+              <select
+                id="commune"
+                name="commune"
+                required
+                disabled={!wilaya}
+                value={commune}
+                onChange={(e) => {
+                  setCommune(e.target.value);
+                  setCommuneError('');
+                }}
+                className={`w-full px-4 py-3 rounded-xl border text-gray-900 ${communeError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all bg-white disabled:bg-gray-100 disabled:text-gray-400 appearance-auto`}
+              >
+                <option value="">
+                  {wilaya ? '— اختر البلدية —' : '— اختر الولاية أولاً —'}
+                </option>
+                {communes.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
             )}
+            {wilaya && communes.length > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setCommuneManual((v) => !v);
+                  setCommune('');
+                  setCommuneError('');
+                }}
+                className="text-xs font-bold text-primary mt-2 underline"
+              >
+                {communeManual ? '← اختر من القائمة' : 'بلديتي مش في القائمة — نكتبها'}
+              </button>
+            )}
+            {communeError && <p className="text-red-500 text-xs mt-1 font-bold">{communeError}</p>}
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-1">نوع التوصيل *</label>
-          <select
-            id="delivery_type"
-            required
-            value={deliveryType}
-            onChange={(e) => {
-              setDeliveryType(e.target.value as 'home' | 'office');
-              setDeliveryError('');
-            }}
-            className={`w-full px-4 py-3 rounded-xl border ${deliveryError ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-primary outline-none bg-white`}
+          <p className="text-sm font-bold text-gray-700 mb-1">
+            التوصيل: {wilaya
+              ? formatShippingLabel('home', shippingRate.home)
+              : '🏠 للمنزل (يظهر السعر بعد الولاية)'}
+          </p>
+          <button
+            type="button"
+            onClick={() => setShowDeliveryOptions((v) => !v)}
+            className="text-xs font-bold text-gray-500 underline"
           >
-            <option value="home">
-              {wilaya
-                ? formatShippingLabel('home', shippingRate.home)
-                : '🏠 توصيل للمنزل'}
-            </option>
-            <option value="office" disabled={Boolean(wilaya) && !isDeskDeliveryAvailable(wilaya)}>
-              {wilaya
-                ? isDeskDeliveryAvailable(wilaya)
-                  ? formatShippingLabel('office', shippingRate.desk)
-                  : '🏢 مكتب التوصيل — غير متوفر'
-                : '🏢 استلام من مكتب التوصيل (Stop Desk)'}
-            </option>
-          </select>
+            {showDeliveryOptions ? 'إخفاء خيارات التوصيل' : 'تبدّل لمكتب DHD (Stop Desk)؟'}
+          </button>
+          {showDeliveryOptions && (
+            <select
+              id="delivery_type"
+              value={deliveryType}
+              onChange={(e) => {
+                setDeliveryType(e.target.value as 'home' | 'office');
+                setDeliveryError('');
+              }}
+              className={`w-full mt-2 px-4 py-3 rounded-xl border ${deliveryError ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-primary outline-none bg-white`}
+            >
+              <option value="home">
+                {wilaya
+                  ? formatShippingLabel('home', shippingRate.home)
+                  : '🏠 توصيل للمنزل'}
+              </option>
+              <option value="office" disabled={Boolean(wilaya) && !isDeskDeliveryAvailable(wilaya)}>
+                {wilaya
+                  ? isDeskDeliveryAvailable(wilaya)
+                    ? formatShippingLabel('office', shippingRate.desk)
+                    : '🏢 مكتب التوصيل — غير متوفر'
+                  : '🏢 استلام من مكتب التوصيل'}
+              </option>
+            </select>
+          )}
           {deliveryError && <p className="text-red-500 text-xs mt-1 font-bold">{deliveryError}</p>}
           {wilaya && deliveryType === 'office' && (
             <p className="text-xs text-amber-800 mt-2 bg-amber-50 border border-amber-100 rounded-lg p-2 leading-relaxed">
               {getWilayaCode(wilaya) === '16' || getWilayaCode(wilaya) === '09'
-                ? '🏢 مكاتب DHD متعددة في هذه الولاية — اختر بلديتك الأقرب للمكتب.'
-                : '🏢 الاستلام من مكتب DHD في عاصمة الولاية (ليس في كل البلديات). نتصل بك لتحديد المكتب.'}
+                ? '🏢 مكاتب DHD متعددة — نتصل بيك لتحديد المكتب.'
+                : '🏢 الاستلام من مكتب DHD في عاصمة الولاية.'}
             </p>
-          )}
-          {wilaya && deliveryType === 'home' && (
-            <p className="text-xs text-gray-500 mt-1">السعر حسب تعريفة DHD للولاية المختارة</p>
           )}
         </div>
 
-        <div>
-          <label className="block text-sm font-bold text-gray-700 mb-1">
-            الكمية <span className="text-gray-400 font-normal">(حد أقصى {maxQuantity})</span>
-          </label>
-          <div className="flex items-center border border-gray-300 rounded-xl overflow-hidden w-32">
-            <button
-              type="button"
-              onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              className="w-10 h-12 bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold text-xl flex items-center justify-center"
-            >-</button>
-            <div className="flex-1 h-12 flex items-center justify-center font-bold text-lg border-x border-gray-300">
-              {quantity}
-            </div>
-            <button
-              type="button"
-              onClick={() => setQuantity(Math.min(maxQuantity, quantity + 1))}
-              className="w-10 h-12 bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold text-xl flex items-center justify-center"
-            >+</button>
-          </div>
-        </div>
+        <input type="hidden" name="quantity" value={quantity} />
 
         <div className="bg-gray-50 p-4 rounded-xl mt-6 border border-gray-200">
           {exitDiscount > 0 && (
