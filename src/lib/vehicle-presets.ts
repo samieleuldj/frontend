@@ -4,7 +4,7 @@ import { CAR_CATALOG, formatVehicleSelection } from '@/data/car-brands';
 export const AD_LANDING_PRESETS: Record<string, { brandId: string; modelId: string }> = {
   symbol: { brandId: 'renault', modelId: 'rn-symbol-13' },
   'symbol-09': { brandId: 'renault', modelId: 'rn-symbol-09' },
-  'clio-3': { brandId: 'renault', modelId: 'rn-clio-debza' }, // debza phase — Clio 3 stock à ajouter
+  'clio-3': { brandId: 'renault', modelId: 'rn-clio-debza' },
   'clio-4': { brandId: 'renault', modelId: 'rn-clio-4' },
   logan: { brandId: 'dacia', modelId: 'dc-logan-nv' },
   sandero: { brandId: 'dacia', modelId: 'dc-sandero' },
@@ -18,10 +18,7 @@ export const AD_LANDING_PRESETS: Record<string, { brandId: string; modelId: stri
   polo: { brandId: 'volkswagen', modelId: 'vw-polo' },
   caddy: { brandId: 'volkswagen', modelId: 'vw-caddy' },
   corolla: { brandId: 'toyota', modelId: 'ty-corolla' },
-  accent: { brandId: 'hyundai', modelId: 'hy-accent-rb' },
-  berlingo: { brandId: 'citroen', modelId: 'ct-berlingo-2' },
-  'c-elysee': { brandId: 'citroen', modelId: 'ct-c-elysee' },
-  jetta: { brandId: 'volkswagen', modelId: 'vw-jetta-5' },
+  accent: { brandId: 'hyundai', modelId: 'hy-accent' },
 };
 
 export type VehiclePreset = {
