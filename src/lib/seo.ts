@@ -1,23 +1,23 @@
 import type { Metadata } from 'next';
 
 export const siteConfig = {
-  name: 'AUTO PLUS DZ',
-  nameAr: 'أوتو بلاس ديزاد',
-  tagline: 'أكسسوارات السيارات في الجزائر',
+  name: 'Confort DZ',
+  nameAr: 'كونفور ديزاد',
+  tagline: 'منتجات الراحة في الجزائر',
   description:
-    'متجر AUTO PLUS DZ — أكسسوارات السيارات: موكات عازلة للكابو، حماية المحرك، تركيب سهل. الدفع عند الاستلام والتوصيل لـ 58 ولاية.',
+    'متجر Confort DZ — أجهزة تدليك، عناية، راحة يومية، وموكات عازلة للكابو. الدفع عند الاستلام والتوصيل لـ 58 ولاية.',
   locale: 'ar_DZ',
   keywords: [
     'متجر الجزائر',
     'دفع عند الاستلام',
     'توصيل 58 ولاية',
-    'أكسسوارات السيارات',
+    'كونفور ديزاد',
+    'Confort DZ',
+    'منتجات الراحة',
+    'جهاز سيلوليت',
     'موكات الكابو',
-    'عزل الكابو',
-    'AUTO PLUS DZ',
-    'أوتو بلاس ديزاد',
   ],
-  defaultOgImage: '/products/hood-insulation-mat/solution.png',
+  defaultOgImage: '/products/cellulite-device/hero.png',
 };
 
 export function getSiteUrl(): string {

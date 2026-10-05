@@ -1,12 +1,18 @@
 export const storeBrand = {
+  name: 'Confort DZ',
+  nameAr: 'كونفور ديزاد',
+  tagline: 'COMFORT STORE',
+  taglineAr: 'منتجات الراحة في الجزائر',
+  description:
+    'المتجر الجزائري لمنتجات الراحة اليومية — أجهزة تدليك، عناية، وأكسسوارات auto. الدفع عند الاستلام والتوصيل لـ 58 ولاية.',
+  email: 'contact@confortdz.shop',
+  accentClass: 'text-accent',
+};
+
+export const autoBrand = {
   name: 'AUTO PLUS DZ',
   nameAr: 'أوتو بلاس ديزاد',
-  tagline: 'ACCESSOIRES AUTO',
   taglineAr: 'أكسسوارات السيارات',
-  description:
-    'متجر جزائري متخصص في أكسسوارات السيارات — عزل الكابو، حماية المحرك، ومنتجات تركيب سهلة. الدفع عند الاستلام والتوصيل لـ 58 ولاية.',
-  email: '',
-  accentClass: 'text-amber-400',
 };
 
 export function getSiteDisplayUrl(): string {

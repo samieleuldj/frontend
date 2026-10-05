@@ -17,7 +17,7 @@ const PIXEL_BY_PRODUCT: Record<string, string | undefined> = {
     process.env.NEXT_PUBLIC_META_PIXEL_THERMAL_MASSAGE || '1280276840966709',
 };
 
-const LANDING_PATHS = new Set(['/', '/product/hood-insulation-mat']);
+const LANDING_PATHS = new Set(['/product/hood-insulation-mat']);
 
 export function getMetaPixelIdForProduct(productId: string): string {
   const specific = PIXEL_BY_PRODUCT[productId]?.trim();

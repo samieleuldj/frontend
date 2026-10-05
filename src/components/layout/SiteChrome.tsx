@@ -1,15 +1,14 @@
 'use client';
 
-import LandingHeader from '@/components/layout/LandingHeader';
-import LandingFooter from '@/components/layout/LandingFooter';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 
-/** Single-product landing (AUTO PLUS / موكات) — no Confort store navigation. */
 export default function SiteChrome({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <LandingHeader />
+      <Header />
       <main className="flex-grow">{children}</main>
-      <LandingFooter />
+      <Footer />
     </>
   );
 }
