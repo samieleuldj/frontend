@@ -15,6 +15,8 @@ const PIXEL_BY_PRODUCT: Record<string, string | undefined> = {
     process.env.NEXT_PUBLIC_META_PIXEL_MINI_CLIMA_GEANT || '1061415349433201',
   'thermal-massage-brace':
     process.env.NEXT_PUBLIC_META_PIXEL_THERMAL_MASSAGE || '1280276840966709',
+  'knee-red-light-massager':
+    process.env.NEXT_PUBLIC_META_PIXEL_KNEE_RED_LIGHT || '1061415349433201',
 };
 
 const LANDING_PATHS = new Set(['/product/hood-insulation-mat']);
