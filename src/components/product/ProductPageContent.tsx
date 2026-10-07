@@ -134,7 +134,7 @@ export default function ProductPageContent({
                     <div className="w-full rounded-xl overflow-hidden border border-red-100 shadow-sm bg-gray-50">
                       <Image
                         src={product.beforeImage}
-                        alt="مشاكل الكابو — حرارة وضجيج وعازل متلف"
+                        alt={`${product.name} — المشكلة`}
                         width={800}
                         height={1000}
                         className="w-full h-auto"
@@ -155,7 +155,7 @@ export default function ProductPageContent({
                     <div className="w-full rounded-xl overflow-hidden border border-green-100 shadow-sm bg-gray-50 order-2 md:order-1">
                       <Image
                         src={product.afterImage}
-                        alt="تركيب الموكات العازلة تحت الكابو"
+                        alt={`${product.name} — الحل`}
                         width={800}
                         height={1000}
                         className="w-full h-auto"
