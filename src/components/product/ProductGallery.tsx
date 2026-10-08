@@ -22,7 +22,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
     images.length >= 4 ? 'grid-cols-4' : images.length === 3 ? 'grid-cols-3' : 'grid-cols-2';
 
   return (
-    <div className="space-y-4" dir="rtl">
+    <div id="product-hero" className="space-y-4" dir="rtl">
       <div className="relative w-full aspect-square bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm group">
         <Image
           src={images[activeIndex]}

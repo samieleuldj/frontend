@@ -1,46 +1,58 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import ProductPriceDisplay from '@/components/product/ProductPriceDisplay';
-import { STORE_WHATSAPP_URL } from '@/lib/store';
-import { trackLead } from '@/lib/pixels';
 
 type StickyOrderBarProps = {
   productId: string;
   productName: string;
   price: number;
+  oldPrice?: number;
 };
 
-export default function StickyOrderBar({ productId, productName, price }: StickyOrderBarProps) {
-  const whatsAppUrl = `${STORE_WHATSAPP_URL}?text=${encodeURIComponent(
-    'سلام، بغيت نطلب موكات عازلة للكابو (3900 دج — COD). ماركة/موديل سيارتي: '
-  )}`;
+export default function StickyOrderBar({
+  productId,
+  productName,
+  price,
+  oldPrice,
+}: StickyOrderBarProps) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const hero = document.getElementById('product-hero');
+    if (!hero) {
+      setVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setVisible(!entry.isIntersecting),
+      { threshold: 0.05 }
+    );
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, []);
+
+  if (!visible) return null;
 
   return (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 p-3 bg-white border-t border-gray-200 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.1)] z-50">
-      <div className="flex items-center justify-between mb-2 px-1">
-        <span className="font-bold text-gray-600 text-sm">السعر:</span>
-        <ProductPriceDisplay
-          productId={productId}
-          price={price}
-          size="md"
-          showSavings={false}
-        />
-      </div>
-      <div className="grid grid-cols-2 gap-2">
-        <a
-          href={whatsAppUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => trackLead({ productId, productName, price })}
-          className="flex items-center justify-center gap-1 bg-green-600 hover:bg-green-700 text-white text-center font-black text-sm py-3.5 rounded-xl shadow-lg"
-        >
-          💬 واتساب
-        </a>
+    <div className="sticky-cta lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-[0_-10px_24px_-8px_rgba(0,0,0,0.15)] px-4 py-3 safe-area-pb">
+      <div className="flex items-center gap-3">
+        <div className="sticky-price shrink-0">
+          <ProductPriceDisplay
+            productId={productId}
+            price={price}
+            oldPrice={oldPrice}
+            size="md"
+            showSavings={false}
+          />
+        </div>
         <a
           href="#order-form"
-          className="flex items-center justify-center bg-accent hover:bg-accent/90 text-white text-center font-black text-sm py-3.5 rounded-xl shadow-lg"
+          aria-label={`أطلب ${productName}`}
+          className="sticky-btn flex-1 flex items-center justify-center bg-accent hover:bg-accent/90 text-white text-center font-black text-sm py-3.5 px-4 rounded-xl shadow-lg min-h-[48px]"
         >
-          أطلب COD
+          أطلب الآن — COD ✓
         </a>
       </div>
     </div>

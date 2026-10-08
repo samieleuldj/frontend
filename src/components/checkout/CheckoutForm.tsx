@@ -25,6 +25,28 @@ import {
 } from '@/data/car-brands';
 import { getSiteDisplayUrl } from '@/lib/store-brand';
 
+function formatAlgerianPhoneInput(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 10);
+  if (digits.length <= 4) return digits;
+  if (digits.length <= 6) return `${digits.slice(0, 4)} ${digits.slice(4)}`;
+  if (digits.length <= 8) return `${digits.slice(0, 4)} ${digits.slice(4, 6)} ${digits.slice(6)}`;
+  return `${digits.slice(0, 4)} ${digits.slice(4, 6)} ${digits.slice(6, 8)} ${digits.slice(8)}`;
+}
+
+function isValidAlgerianPhone(phone: string): boolean {
+  const clean = phone.replace(/\s/g, '');
+  return /^(05|06|07)[0-9]{8}$/.test(clean) || clean === '0555555555';
+}
+
+function FieldValidMark({ show }: { show: boolean }) {
+  if (!show) return null;
+  return (
+    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-green-500 font-bold text-lg animate-field-check pointer-events-none">
+      ✓
+    </span>
+  );
+}
+
 const WILAYAS = [
   "01 - أدرار", "02 - الشلف", "03 - الأغواط", "04 - أم البواقي", "05 - باتنة", "06 - بجاية", "07 - بسكرة", "08 - بشار", "09 - البليدة", "10 - البويرة",
   "11 - تمنراست", "12 - تبسة", "13 - تلمسان", "14 - تيارت", "15 - تيزي وزو", "16 - الجزائر", "17 - الجلفة", "18 - جيجل", "19 - سطيف", "20 - سعيدة",
@@ -39,6 +61,7 @@ interface CheckoutFormProps {
   productName: string;
   price: number;
   requiresVehicleInfo?: boolean;
+  showUrgencyBanner?: boolean;
   variant?: 'default' | 'automotive';
   initialBrandId?: string;
   initialModelId?: string;
@@ -49,6 +72,7 @@ export default function CheckoutForm({
   productName,
   price,
   requiresVehicleInfo = false,
+  showUrgencyBanner = false,
   variant = 'default',
   initialBrandId = '',
   initialModelId = '',
@@ -80,6 +104,11 @@ export default function CheckoutForm({
   const [communeManual, setCommuneManual] = useState(false);
   const carModels = getModelsForBrand(carBrandId);
   const checkoutTracked = useRef(false);
+
+  const isNameValid = customerName.trim().length >= 3;
+  const isPhoneValid = isValidAlgerianPhone(phone);
+  const isWilayaValid = wilaya.trim().length > 0;
+  const isCommuneValid = commune.trim().length >= 2;
 
   const shippingRate = useMemo(() => getShippingRate(wilaya), [wilaya]);
   const communes = useMemo(() => getCommunesForWilaya(wilaya), [wilaya]);
@@ -368,6 +397,16 @@ export default function CheckoutForm({
       id="order-form"
     >
       <div className="mb-6 text-center">
+        {showUrgencyBanner && (
+          <div className="urgency-banner mb-4">
+            <span>
+              ⚡ الكمية المتبقية اليوم: <strong>7 قطع فقط</strong>
+            </span>
+            <span>
+              🔥 <strong>23 شخص</strong> شافوا هاد المنتج في آخر ساعة
+            </span>
+          </div>
+        )}
         <h3 className={`text-2xl font-black mb-2 ${isAutomotive ? 'text-white' : 'text-text'}`}>
           أطلب الآن والدفع عند الاستلام
         </h3>
@@ -381,19 +420,22 @@ export default function CheckoutForm({
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-1">الاسم واللقب *</label>
-          <input
-            type="text"
-            id="customer_name"
-            name="customer_name"
-            required
-            value={customerName}
-            onChange={(e) => {
-              setCustomerName(e.target.value);
-              setNameError('');
-            }}
-            placeholder="مثال: محمد أمين"
-            className={`w-full px-4 py-3 rounded-xl border ${nameError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all`}
-          />
+          <div className="relative">
+            <input
+              type="text"
+              id="customer_name"
+              name="customer_name"
+              required
+              value={customerName}
+              onChange={(e) => {
+                setCustomerName(e.target.value);
+                setNameError('');
+              }}
+              placeholder="مثال: محمد أمين"
+              className={`w-full px-4 py-3 rounded-xl border ${nameError ? 'border-red-500 focus:ring-red-500' : isNameValid ? 'border-green-400 focus:ring-green-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all`}
+            />
+            <FieldValidMark show={isNameValid} />
+          </div>
           {nameError && <p className="text-red-500 text-xs mt-1 font-bold">{nameError}</p>}
         </div>
 
@@ -483,84 +525,98 @@ export default function CheckoutForm({
 
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-1">رقم الهاتف *</label>
-          <input
-            type="tel"
-            id="phone"
-            required
-            dir="ltr"
-            value={phone}
-            onChange={(e) => {
-              setPhone(e.target.value);
-              setPhoneError('');
-            }}
-            placeholder="05XX XX XX XX"
-            className={`w-full px-4 py-3 rounded-xl border ${phoneError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all text-right`}
-          />
+          <div className="relative">
+            <input
+              type="tel"
+              id="phone"
+              required
+              dir="ltr"
+              value={phone}
+              onChange={(e) => {
+                setPhone(formatAlgerianPhoneInput(e.target.value));
+                setPhoneError('');
+              }}
+              placeholder="0782 52 79 23"
+              className={`w-full px-4 py-3 rounded-xl border ${phoneError ? 'border-red-500 focus:ring-red-500' : isPhoneValid ? 'border-green-400 focus:ring-green-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all text-right`}
+            />
+            <FieldValidMark show={isPhoneValid} />
+          </div>
           {phoneError && <p className="text-red-500 text-xs mt-1 font-bold">{phoneError}</p>}
         </div>
 
         <div className="grid grid-cols-1 gap-4 relative z-10">
           <div>
             <label htmlFor="wilaya" className="block text-sm font-bold text-gray-700 mb-1">الولاية *</label>
-            <select
-              id="wilaya"
-              name="wilaya"
-              required
-              value={wilaya}
-              onChange={(e) => {
-                setWilaya(e.target.value);
-                setWilayaError('');
-                setCommune('');
-                setCommuneManual(false);
-              }}
-              className={`w-full px-4 py-3 rounded-xl border text-gray-900 ${wilayaError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all bg-white appearance-auto`}
-            >
-              <option value="">— اختر الولاية —</option>
-              {WILAYAS.map((w) => (
-                <option key={w} value={w}>{w}</option>
-              ))}
-            </select>
-            {wilayaError && <p className="text-red-500 text-xs mt-1 font-bold">{wilayaError}</p>}
-          </div>
-                    <div>
-            <label htmlFor="commune" className="block text-sm font-bold text-gray-700 mb-1">البلدية *</label>
-            {communeManual || communes.length === 0 ? (
-              <input
-                id="commune"
-                name="commune"
-                type="text"
-                required
-                disabled={!wilaya}
-                value={commune}
-                onChange={(e) => {
-                  setCommune(e.target.value);
-                  setCommuneError('');
-                }}
-                placeholder="اكتب اسم البلدية"
-                className={`w-full px-4 py-3 rounded-xl border text-gray-900 ${communeError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all disabled:bg-gray-100`}
-              />
-            ) : (
+            <div className="relative">
               <select
-                id="commune"
-                name="commune"
+                id="wilaya"
+                name="wilaya"
                 required
-                disabled={!wilaya}
-                value={commune}
+                value={wilaya}
                 onChange={(e) => {
-                  setCommune(e.target.value);
-                  setCommuneError('');
+                  setWilaya(e.target.value);
+                  setWilayaError('');
+                  setCommune('');
+                  setCommuneManual(false);
                 }}
-                className={`w-full px-4 py-3 rounded-xl border text-gray-900 ${communeError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all bg-white disabled:bg-gray-100 disabled:text-gray-400 appearance-auto`}
+                className={`w-full px-4 py-3 rounded-xl border text-gray-900 ${wilayaError ? 'border-red-500 focus:ring-red-500' : isWilayaValid ? 'border-green-400 focus:ring-green-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all bg-white appearance-auto`}
               >
-                <option value="">
-                  {wilaya ? '— اختر البلدية —' : '— اختر الولاية أولاً —'}
-                </option>
-                {communes.map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                <option value="">— اختر الولاية —</option>
+                {WILAYAS.map((w) => (
+                  <option key={w} value={w}>{w}</option>
                 ))}
               </select>
-            )}
+              <FieldValidMark show={isWilayaValid} />
+            </div>
+            {wilayaError && <p className="text-red-500 text-xs mt-1 font-bold">{wilayaError}</p>}
+          </div>
+          <div>
+            <label htmlFor="commune" className="block text-sm font-bold text-gray-700 mb-1">البلدية *</label>
+            <div className="relative">
+              {communeManual || communes.length === 0 ? (
+                <input
+                  id="commune"
+                  name="commune"
+                  type="text"
+                  required
+                  disabled={!wilaya}
+                  value={commune}
+                  onChange={(e) => {
+                    setCommune(e.target.value);
+                    setCommuneError('');
+                  }}
+                  placeholder="مثال: باب الوادي، حسين داي..."
+                  className={`w-full px-4 py-3 rounded-xl border text-gray-900 ${communeError ? 'border-red-500 focus:ring-red-500' : isCommuneValid ? 'border-green-400 focus:ring-green-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all disabled:bg-gray-100`}
+                />
+              ) : (
+                <select
+                  id="commune"
+                  name="commune"
+                  required
+                  disabled={!wilaya}
+                  value={commune}
+                  onChange={(e) => {
+                    setCommune(e.target.value);
+                    setCommuneError('');
+                  }}
+                  className={`w-full px-4 py-3 rounded-xl border text-gray-900 ${communeError ? 'border-red-500 focus:ring-red-500' : isCommuneValid ? 'border-green-400 focus:ring-green-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all bg-white disabled:bg-gray-100 disabled:text-gray-400 appearance-auto`}
+                >
+                  <option value="">
+                    {wilaya ? '— اختر البلدية —' : '— اختر الولاية أولاً —'}
+                  </option>
+                  {communes.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              )}
+              <FieldValidMark show={isCommuneValid && Boolean(wilaya)} />
+            </div>
             {communeError && <p className="text-red-500 text-xs mt-1 font-bold">{communeError}</p>}
+            {wilaya && (
+              <p className="text-xs text-gray-500 mt-1.5 font-medium">
+                سنتصل بيك للتأكيد على العنوان الكامل
+              </p>
+            )}
             {wilaya && communes.length > 0 && !communeManual && (
               <button
                 type="button"
@@ -676,23 +732,51 @@ export default function CheckoutForm({
           </div>
         )}
 
+        <div className="flex flex-wrap justify-center gap-2 mt-4 mb-2">
+          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-gray-700 bg-gray-50 border border-gray-200 px-2.5 py-1.5 rounded-full">
+            🤝 COD
+          </span>
+          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-gray-700 bg-gray-50 border border-gray-200 px-2.5 py-1.5 rounded-full">
+            🚚 58 ولاية
+          </span>
+          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-gray-700 bg-gray-50 border border-gray-200 px-2.5 py-1.5 rounded-full">
+            📞 تأكيد هاتفي
+          </span>
+          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-gray-700 bg-gray-50 border border-gray-200 px-2.5 py-1.5 rounded-full">
+            🔄 استبدال 7 أيام
+          </span>
+        </div>
+
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`w-full py-4 rounded-xl font-black text-xl text-white shadow-lg transition-all transform hover:-translate-y-1 mt-4 ${
+          className={`w-full min-h-[56px] md:min-h-0 py-4 rounded-xl font-black text-xl text-white shadow-lg transition-all transform hover:-translate-y-1 ${
             isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-accent hover:bg-accent/90 hover:shadow-xl animate-pulse-slow'
           }`}
         >
-          {isSubmitting ? 'جاري الإرسال...' : 'تأكيد الطلب — الدفع عند الاستلام'}
+          {isSubmitting ? (
+            <span className="inline-flex items-center justify-center gap-2">
+              <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              جاري الإرسال...
+            </span>
+          ) : (
+            'تأكيد الطلب — الدفع عند الاستلام'
+          )}
         </button>
 
         <p className="text-center text-xs text-green-700 font-bold mt-2">
           ✓ ما تخلص حتى تستلم المنتج وتتأكد منو
         </p>
 
-        <p className="text-center text-xs text-gray-500 mt-3 flex items-center justify-center gap-1">
-          <span>🔒</span> طلب واحد لكل رقم/اتصال في اليوم — حماية من الطلبات الوهمية
-        </p>
+        {!requiresVehicleInfo ? (
+          <p className="text-center text-xs text-green-700 font-bold mt-3 flex items-center justify-center gap-1">
+            ✓ طلبك محفوظ — نتصلو بيك خلال ساعة للتأكيد
+          </p>
+        ) : (
+          <p className="text-center text-xs text-gray-500 mt-3 flex items-center justify-center gap-1">
+            <span>🔒</span> طلب واحد لكل رقم/اتصال في اليوم — حماية من الطلبات الوهمية
+          </p>
+        )}
 
         <div className="mt-5 pt-5 border-t border-gray-200">
           <p className="text-center text-sm text-gray-600 mb-3">تحب تطلب عبر واتساب؟</p>

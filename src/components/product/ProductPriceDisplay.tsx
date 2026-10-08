@@ -62,27 +62,34 @@ export default function ProductPriceDisplay({
   const unitPrice = livePrice - discount;
   const sizeClass =
     size === 'xl' ? 'text-4xl' : size === 'lg' ? 'text-3xl' : 'text-2xl';
+  const savingsAmount = liveOldPrice ? liveOldPrice - livePrice : 0;
+  const savingsPercent =
+    liveOldPrice && liveOldPrice > livePrice
+      ? Math.round((savingsAmount / liveOldPrice) * 100)
+      : 0;
 
   return (
-    <div className="flex items-center gap-4 flex-wrap">
-      <span className={`${sizeClass} font-black text-primary`}>{unitPrice} دج</span>
-      {(liveOldPrice || discount > 0) && (
-        <div className="flex flex-col">
-          {(liveOldPrice || discount > 0) && (
-            <span className="text-gray-400 line-through text-sm">
-              {discount > 0 ? `${livePrice} دج` : liveOldPrice ? `${liveOldPrice} دج` : ''}
-            </span>
-          )}
-          {showSavings && liveOldPrice && !discount && (
-            <span className="text-accent text-xs font-bold bg-orange-50 px-2 py-0.5 rounded">
-              وفر {liveOldPrice - livePrice} دج!
-            </span>
-          )}
-          {discount > 0 && (
-            <span className="text-green-700 text-xs font-bold bg-green-50 px-2 py-0.5 rounded">
-              خصم {discount} دج مفعّل 🎁
-            </span>
-          )}
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-4 flex-wrap">
+        <span className={`${sizeClass} font-black text-primary`}>{unitPrice} دج</span>
+        {(liveOldPrice || discount > 0) && (
+          <div className="flex flex-col">
+            {(liveOldPrice || discount > 0) && (
+              <span className="text-gray-400 line-through text-sm old-price">
+                {discount > 0 ? `${livePrice} دج` : liveOldPrice ? `${liveOldPrice} دج` : ''}
+              </span>
+            )}
+            {discount > 0 && (
+              <span className="text-green-700 text-xs font-bold bg-green-50 px-2 py-0.5 rounded">
+                خصم {discount} دج مفعّل 🎁
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+      {showSavings && liveOldPrice && !discount && savingsAmount > 0 && (
+        <div className="savings-badge inline-flex items-center text-green-800 text-xs font-black bg-green-100 border border-green-200 px-3 py-1.5 rounded-full w-fit">
+          وفر {savingsAmount} دج — خصم {savingsPercent}% 🎉
         </div>
       )}
     </div>

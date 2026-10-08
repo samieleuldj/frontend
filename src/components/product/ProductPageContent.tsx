@@ -6,9 +6,11 @@ import ProductReviews from '@/components/product/ProductReviews';
 import ConversionTrustBar from '@/components/product/ConversionTrustBar';
 import ProductPriceDisplay from '@/components/product/ProductPriceDisplay';
 import StickyOrderBar from '@/components/product/StickyOrderBar';
+import ProductSocialProof from '@/components/product/ProductSocialProof';
 import SupportedBrandsBar from '@/components/product/SupportedBrandsBar';
 import VehiclePresetBanner from '@/components/product/VehiclePresetBanner';
 import type { Product, ProductReview } from '@/data/products';
+import { HEALTH_TRUST_POINTS, VEHICLE_TRUST_POINTS } from '@/lib/product-trust-points';
 import { storeBrand } from '@/lib/store-brand';
 import type { VehiclePreset } from '@/lib/vehicle-presets';
 
@@ -33,6 +35,8 @@ export default function ProductPageContent({
 }: Props) {
   const problemText = product.problemText || DEFAULT_PROBLEM_TEXT;
   const solutionText = product.solutionText || DEFAULT_SOLUTION_TEXT;
+  const trustPoints = product.requiresVehicleInfo ? VEHICLE_TRUST_POINTS : HEALTH_TRUST_POINTS;
+  const showUrgencyBanner = product.id === 'knee-red-light-massager';
 
   return (
     <div className="bg-gray-50 min-h-screen pb-24">
@@ -57,7 +61,7 @@ export default function ProductPageContent({
             {product.images && product.images.length > 0 ? (
               <ProductGallery images={product.images} productName={product.name} />
             ) : (
-              <div className="w-full aspect-square bg-white rounded-2xl border border-gray-200 flex items-center justify-center shadow-sm">
+              <div id="product-hero" className="w-full aspect-square bg-white rounded-2xl border border-gray-200 flex items-center justify-center shadow-sm">
                 <span className="text-gray-400 font-medium">صورة المنتج الرئيسية</span>
               </div>
             )}
@@ -70,6 +74,7 @@ export default function ProductPageContent({
               )}
               <h1 className="text-2xl font-black text-text mb-3 leading-tight">{product.name}</h1>
               <p className="text-gray-600 text-sm mb-4 leading-relaxed">{product.description}</p>
+              <ProductSocialProof reviewCount={product.reviewCount} rating={product.rating} />
               <ProductPriceDisplay
                 productId={product.id}
                 price={product.price}
@@ -92,17 +97,25 @@ export default function ProductPageContent({
                   </span>
                 )}
                 <h1 className="text-3xl font-black text-text mb-3 leading-tight">{product.name}</h1>
-                <p className="text-gray-600 text-sm mb-6 leading-relaxed">{product.description}</p>
+                <p className="text-gray-600 text-sm mb-4 leading-relaxed">{product.description}</p>
+                <ProductSocialProof reviewCount={product.reviewCount} rating={product.rating} />
                 <ProductPriceDisplay
                   productId={product.id}
                   price={product.price}
                   oldPrice={product.oldPrice}
                   size="xl"
                 />
-                <div className="flex items-center gap-2 text-sm text-red-700 font-bold bg-red-50 p-3 rounded-lg border border-red-100 mt-4">
-                  <span className="animate-pulse">🔥</span>
-                  طلب عالي — اختار ماركة وموديل سيارتك بالضبط
-                </div>
+                {product.requiresVehicleInfo ? (
+                  <div className="flex items-center gap-2 text-sm text-red-700 font-bold bg-red-50 p-3 rounded-lg border border-red-100 mt-4">
+                    <span className="animate-pulse">🔥</span>
+                    طلب عالي — اختار ماركة وموديل سيارتك بالضبط
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-sm text-green-700 font-bold bg-green-50 p-3 rounded-lg border border-green-100 mt-4">
+                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                    متوفر — جاهز للتوصيل
+                  </div>
+                )}
               </div>
 
               <CheckoutForm
@@ -110,6 +123,7 @@ export default function ProductPageContent({
                 productName={product.name}
                 price={product.price}
                 requiresVehicleInfo={product.requiresVehicleInfo}
+                showUrgencyBanner={showUrgencyBanner}
                 initialBrandId={vehiclePreset?.brandId}
                 initialModelId={vehiclePreset?.modelId}
               />
@@ -194,12 +208,7 @@ export default function ProductPageContent({
             <div className="bg-primary text-white p-6 md:p-8 rounded-2xl shadow-md relative overflow-hidden">
               <h2 className="text-2xl font-black mb-6 relative z-10">علاش تشري من {storeBrand.nameAr}؟</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
-                {[
-                  { icon: '🥇', title: 'موكات مخصصة حسب سيارتك', desc: 'اختار الماركة والموديل — نوصلك المقاس المناسب.' },
-                  { icon: '🔄', title: 'استبدال ساهل', desc: 'مشكل في المقاس؟ نبدلوهلك بلا تعقيد.' },
-                  { icon: '📞', title: 'نتصلو بيك للتأكيد', desc: 'نتأكدو من معلومات سيارتك قبل الإرسال.' },
-                  { icon: '🤝', title: 'خلص كي تستلم', desc: 'الدفع عند الاستلام — حقك مضمون 100%.' },
-                ].map((item) => (
+                {trustPoints.map((item) => (
                   <div key={item.title} className="flex gap-4">
                     <div className="text-3xl">{item.icon}</div>
                     <div>
@@ -220,7 +229,12 @@ export default function ProductPageContent({
         </div>
       </div>
 
-      <StickyOrderBar productId={product.id} productName={product.name} price={product.price} />
+      <StickyOrderBar
+        productId={product.id}
+        productName={product.name}
+        price={product.price}
+        oldPrice={product.oldPrice}
+      />
     </div>
   );
 }
