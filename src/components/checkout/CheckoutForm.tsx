@@ -536,7 +536,7 @@ export default function CheckoutForm({
                 setPhone(formatAlgerianPhoneInput(e.target.value));
                 setPhoneError('');
               }}
-              placeholder="0797 714 326"
+              placeholder="05XX XX XX XX"
               className={`w-full px-4 py-3 rounded-xl border ${phoneError ? 'border-red-500 focus:ring-red-500' : isPhoneValid ? 'border-green-400 focus:ring-green-500' : 'border-gray-300 focus:ring-primary'} focus:ring-2 focus:border-transparent outline-none transition-all text-right`}
             />
             <FieldValidMark show={isPhoneValid} />

@@ -1,5 +1,10 @@
 import Link from 'next/link';
-import { STORE_PHONE_DISPLAY, STORE_WHATSAPP_URL } from '@/lib/store';
+import {
+  STORE_PHONE,
+  STORE_PHONE_DISPLAY,
+  STORE_WHATSAPP_DISPLAY,
+  STORE_WHATSAPP_URL,
+} from '@/lib/store';
 import { storeBrand } from '@/lib/store-brand';
 
 export default function Footer() {
@@ -29,14 +34,14 @@ export default function Footer() {
             <ul className="space-y-3 text-gray-400">
               <li className="flex items-center gap-2">
                 <span>📞</span>
-                <a href={STORE_WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors" dir="ltr">
+                <a href={`tel:+213${STORE_PHONE.slice(1)}`} className="hover:text-secondary transition-colors" dir="ltr">
                   {STORE_PHONE_DISPLAY}
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <span>💬</span>
-                <a href={STORE_WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors">
-                  واتساب — تواصل معنا
+                <a href={STORE_WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors" dir="ltr">
+                  {STORE_WHATSAPP_DISPLAY} — واتساب
                 </a>
               </li>
               <li className="flex items-center gap-2">

@@ -1,4 +1,4 @@
-import { STORE_PHONE_DISPLAY, STORE_WHATSAPP_URL } from '@/lib/store';
+import { STORE_WHATSAPP_DISPLAY, STORE_WHATSAPP_URL } from '@/lib/store';
 import { storeBrand } from '@/lib/store-brand';
 
 export default function LandingFooter() {
@@ -16,7 +16,7 @@ export default function LandingFooter() {
           className="inline-block text-amber-400 hover:text-amber-300 font-bold"
           dir="ltr"
         >
-          {STORE_PHONE_DISPLAY}
+          {STORE_WHATSAPP_DISPLAY}
         </a>
         <p className="text-xs text-zinc-600 pt-2">
           © {new Date().getFullYear()} {storeBrand.nameAr}. جميع الحقوق محفوظة.
